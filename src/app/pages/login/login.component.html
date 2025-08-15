@@ -1,0 +1,58 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Нэвтрэх</h1>
+      <p>Бүртгэлтэй хэрэглэгчдийн хэсэгт нэвтэрнэ үү</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">Имэйл хаяг</label>
+        <input 
+          type="email" 
+          id="email"
+          name="email"
+          [(ngModel)]="loginData.email"
+          required
+          class="form-input"
+          placeholder="Имэйл хаягаа оруулна уу"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">Нууц үг</label>
+        <input 
+          type="password" 
+          id="password"
+          name="password"
+          [(ngModel)]="loginData.password"
+          required
+          class="form-input"
+          placeholder="Нууц үгээ оруулна уу"
+        >
+      </div>
+
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input type="checkbox" name="remember">
+          <span class="checkmark"></span>
+          Намайг сана
+        </label>
+        <a href="#" class="forgot-password">Нууц үгээ мартсан?</a>
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+        <span *ngIf="isLoading" class="loading-spinner"></span>
+        {{ isLoading ? 'Нэвтэрч байна...' : 'Нэвтрэх' }}
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Бүртгэл байхгүй юу? <a routerLink="/register" class="register-link">Бүртгүүлэх</a></p>
+    </div>
+  </div>
+</div> 

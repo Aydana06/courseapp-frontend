@@ -1,0 +1,111 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Төлбөртэй Сургалтын Вэбсайт</h1>
+      <p class="hero-description">
+        Мэргэжлийн багш нартай хамт програмчлалын урлагийг сурна уу. Практик
+        дадлагатай, ойлгомжтой материалтай сургалтууд.
+      </p>
+      <div class="hero-buttons">
+        <a routerLink="/courses" class="btn btn-primary">Сургалтуудыг харах</a>
+        <a routerLink="/register" class="btn btn-secondary">Бүртгүүлэх</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Courses Section -->
+  <section class="featured-courses">
+    <div class="container">
+      <h2 class="section-title">Онцлох Сургалтууд</h2>
+      <div class="courses-grid">
+        <div class="course-card" *ngFor="let course of featuredCourses">
+          <div class="course-image" [routerLink]="['/course', course.id]">
+            <img [src]="course.image" [alt]="course.title" />
+          </div>
+          <div class="course-content">
+            <a [routerLink]="['/course', course.id]"
+              ><h3 class="course-title">
+                {{ course.title }}
+              </h3></a
+            >
+            <p class="course-description">{{ course.description }}</p>
+            <div class="course-meta">
+              <span class="duration">{{ course.duration }}</span>
+              <span class="instructor">{{ course.instructor }}</span>
+            </div>
+            <div class="course-price">
+              <span class="price">{{ course.price | number }}₮</span>
+            </div>
+            <button
+              *ngIf="authService.isAuthenticated()"
+              class="btn btn-outline"
+              (click)="addToCart(course)"
+            >
+              Сагсанд нэмэх
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="statistics">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <h3>1000+</h3>
+          <p>Сурагч</p>
+        </div>
+        <div class="stat-item">
+          <h3>50+</h3>
+          <p>Сургалт</p>
+        </div>
+        <div class="stat-item">
+          <h3>20+</h3>
+          <p>Багш</p>
+        </div>
+        <div class="stat-item">
+          <h3>95%</h3>
+          <p>Сэтгэл ханамж</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials">
+    <div class="container">
+      <h2 class="section-title">Сурагчдын сэтгэгдэл</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+          <div class="testimonial-content">
+            <p>{{ testimonial.content }}</p>
+          </div>
+          <div class="testimonial-author">
+            <h4>{{ testimonial.name }}</h4>
+            <span>{{ testimonial.role }}</span>
+            <div class="rating">
+              <span
+                *ngFor="let star of [1, 2, 3, 4, 5]"
+                class="star"
+                [class.filled]="star <= testimonial.rating"
+                >★</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Өнөөдөр эхлээрэй</h2>
+      <p>Програмчлалын урлагийг сурж, шинэ боломжуудыг нээгээрэй</p>
+      <a routerLink="/register" class="btn btn-primary">Үнэгүй бүртгүүлэх</a>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,165 @@
+<div class="dashboard">
+  <div class="container">
+    <!-- Header -->
+    <div class="dashboard-header">
+      <h1>Хяналтын самбар</h1>
+      <p>
+        Сайн байна уу, <b>{{ user?.name }}! </b>Таны сургалтын явц
+      </p>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-content">
+          <h3>{{ overallStats.totalCourses }}</h3>
+          <p>Бүртгүүлсэн сургалт</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+          <h3>{{ overallStats.completedCourses }}</h3>
+          <p>Дууссан сургалт</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-content">
+          <h3>{{ overallStats.averageProgress }}%</h3>
+          <p>Дундаж явц</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-content">
+          <h3>{{ certificates.length }}</h3>
+          <p>Гэрчилгээ</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+      <!-- Enrolled Courses -->
+      <div class="section enrolled-courses">
+        <div class="section-header">
+          <h2>Миний сургалтууд</h2>
+          <p>Таны бүртгүүлсэн сургалтуудын явц</p>
+        </div>
+
+        <div
+          class="courses-list"
+          *ngIf="enrolledCourses.length > 0; else noCourses"
+        >
+          <div *ngFor="let course of enrolledCourses" class="course-item">
+            <div class="course-image">
+              <img
+                [src]="course.image"
+                [alt]="course.title"
+                onerror="this.src='assets/images/course-placeholder.png'"
+              />
+            </div>
+
+            <div class="course-info">
+              <h3>{{ course.title }}</h3>
+              <p class="instructor">Багш: {{ course.instructor }}</p>
+              <p class="last-accessed">
+                Сүүлд: {{ formatDate(course.lastAccessed) }}
+              </p>
+
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    [style.width.%]="course.progress"
+                    [style.background-color]="getProgressColor(course.progress)"
+                  ></div>
+                </div>
+                <span class="progress-text">{{ course.progress }}%</span>
+              </div>
+            </div>
+
+            <div class="course-actions">
+              <button
+                (click)="continueCourse(course.id)"
+                class="btn btn-primary"
+              >
+                {{ course.progress === 100 ? "Дахин үзэх" : "Үргэлжлүүлэх" }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noCourses>
+          <div class="empty-state">
+            <div class="empty-icon">📚</div>
+            <h3>Бүртгүүлсэн сургалт байхгүй</h3>
+            <p>Сургалтын каталогаас сонгон бүртгүүлээрэй</p>
+            <a routerLink="/courses" class="btn btn-primary">Сургалт хайх</a>
+          </div>
+        </ng-template>
+      </div>
+      <!-- Certificates -->
+      <div class="section certificates" *ngIf="certificates.length > 0">
+        <div class="section-header">
+          <h2>Миний гэрчилгээнүүд</h2>
+        </div>
+
+        <div class="certificates-grid">
+          <div
+            *ngFor="let certificate of certificates"
+            class="certificate-card"
+          >
+            <div class="certificate-icon">🏆</div>
+            <div class="certificate-info">
+              <h4>{{ certificate.courseName }}</h4>
+              <p>{{ formatDate(certificate.issueDate) }}</p>
+              <span class="grade" *ngIf="certificate.grade">{{
+                certificate.grade
+              }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommended Courses -->
+      <div class="section recommended-courses">
+        <div class="section-header">
+          <h2>Санал болгох сургалтууд</h2>
+          <p>Танд тохирсон шинэ сургалтууд</p>
+        </div>
+
+        <div class="recommended-grid">
+          <div
+            *ngFor="let course of recommendedCourses"
+            class="recommended-card"
+          >
+            <div class="course-image">
+              <img
+                [src]="course.image"
+                [alt]="course.title"
+                (error)="onImageError($event)"
+              />
+            </div>
+
+            <div class="course-content">
+              <h4>{{ course.title }}</h4>
+              <p class="instructor">{{ course.instructor }}</p>
+              <div class="price">{{ course.price | number }}₮</div>
+              <a
+                [routerLink]="['/course', course.id]"
+                class="btn btn-primary btn-sm"
+                >Дэлгэрэнгүй</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

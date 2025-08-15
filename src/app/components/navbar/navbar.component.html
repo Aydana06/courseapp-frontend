@@ -1,0 +1,78 @@
+<nav class="navbar">
+  <div class="container">
+    <div class="nav-brand">
+      <a routerLink="/home" class="brand-link">
+        <h1>Төлбөртэй Сургалт</h1>
+      </a>
+    </div>
+
+    <div class="nav-menu" [class.active]="isMenuOpen">
+      <a
+        routerLink="/home"
+        routerLinkActive="active"
+        class="nav-link"
+        (click)="closeMenu()"
+        >Нүүр</a
+      >
+      <a
+        routerLink="/courses"
+        routerLinkActive="active"
+        class="nav-link"
+        (click)="closeMenu()"
+        >Сургалтууд</a
+      >
+
+      <ng-container *ngIf="isAuthenticated">
+        <a
+          routerLink="/cart"
+          routerLinkActive="active"
+          class="nav-link"
+          (click)="closeMenu()"
+          >Сагс</a
+        >
+        <a
+          routerLink="/dashboard"
+          routerLinkActive="active"
+          class="nav-link"
+          (click)="closeMenu()"
+          >Хяналтын самбар</a
+        >
+        <a
+          routerLink="/profile"
+          routerLinkActive="active"
+          class="nav-link"
+          (click)="closeMenu()"
+          >Профайл</a
+        >
+      </ng-container>
+    </div>
+
+    <div class="nav-actions">
+      <ng-container *ngIf="!isAuthenticated; else authenticatedTemplate">
+        <a routerLink="/login" class="btn btn-outline" (click)="closeMenu()"
+          >Нэвтрэх</a
+        >
+        <a routerLink="/register" class="btn btn-primary" (click)="closeMenu()"
+          >Бүртгүүлэх</a
+        >
+      </ng-container>
+
+      <ng-template #authenticatedTemplate>
+        <div class="user-menu">
+          <span class="user-name">{{ currentUser?.name }}</span>
+          <button (click)="logout()" class="btn btn-outline">Гарах</button>
+        </div>
+      </ng-template>
+    </div>
+
+    <button
+      class="mobile-menu-toggle"
+      (click)="toggleMenu()"
+      [class.active]="isMenuOpen"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>

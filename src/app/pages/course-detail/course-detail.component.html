@@ -1,0 +1,118 @@
+<div class="course-detail-container" *ngIf="course">
+  <div class="container">
+    <!-- Course Header -->
+    <div class="course-header">
+      <div class="course-image">
+        <img [src]="course.image" [alt]="course.title" />
+      </div>
+      <div class="course-info">
+        <h1>{{ course.title }}</h1>
+        <p class="course-description">{{ course.description }}</p>
+
+        <div class="course-meta">
+          <div class="meta-item">
+            <span class="meta-label">Багш:</span>
+            <span class="meta-value">{{ course.instructor }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Үргэлжлэх хугацаа:</span>
+            <span class="meta-value">{{ course.duration }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Түвшин:</span>
+            <span class="meta-value">{{ course.level }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Сурагч:</span>
+            <span class="meta-value">{{ course.students }}</span>
+          </div>
+        </div>
+
+        <div class="course-rating">
+          <div class="stars">
+            <span
+              *ngFor="let star of [1, 2, 3, 4, 5]"
+              class="star"
+              [class.filled]="star <= course.rating"
+              >★</span
+            >
+          </div>
+          <span class="rating-text"
+            >{{ course.rating }} ({{ course.students }} сурагч)</span
+          >
+        </div>
+
+        <div class="course-actions">
+          <div class="course-price">
+            <span class="price">{{ course.price | number }}₮</span>
+          </div>
+
+          <!-- Нэвтэрсэн үед -->
+          <button
+            *ngIf="authService.isAuthenticated()"
+            class="btn btn-outline"
+            (click)="addToCart(course)"
+          >
+            Сагсанд нэмэх
+          </button>
+
+          <!-- Нэвтрээгүй үед -->
+          <div
+            *ngIf="!authService.isAuthenticated()"
+            class="auth-required-card"
+          >
+            <h3>Нэвтрэх шаардлагатай</h3>
+            <p>
+              Сургалт авахын тулд та сайтад
+              <a routerLink="/login">нэвтэрч</a> эсвэл
+              <a routerLink="/register">бүртгүүлнэ</a> үү.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course Content -->
+    <div class="course-content">
+      <div class="content-grid">
+        <!-- Lessons -->
+        <div class="content-section">
+          <h2>Хичээлүүд</h2>
+          <div class="lessons-list">
+            <div
+              class="lesson-item"
+              *ngFor="let lesson of course.lessons; let i = index"
+            >
+              <div class="lesson-number">{{ i + 1 }}</div>
+              <div class="lesson-info">
+                <h3>{{ lesson.title }}</h3>
+                <span class="lesson-duration">{{ lesson.duration }}</span>
+              </div>
+              <div class="lesson-type">
+                <span class="type-badge">{{ lesson.type }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Requirements -->
+        <div class="content-section">
+          <h2>Шаардлага</h2>
+          <ul class="requirements-list">
+            <li *ngFor="let requirement of course.requirements">
+              {{ requirement }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- Outcomes -->
+        <div class="content-section">
+          <h2>Сургах зүйлс</h2>
+          <ul class="outcomes-list">
+            <li *ngFor="let outcome of course.outcomes">{{ outcome }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

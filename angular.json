@@ -15,12 +15,10 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+      "assets": [
+  "src/favicon.ico",
+  "src/assets"
+],
             "styles": [
               "src/styles.css"
             ],
@@ -73,12 +71,11 @@
           "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+      "assets": [
+  "src/favicon.ico",
+  "src/assets"
+],
+            
             "styles": [
               "src/styles.css"
             ]
@@ -86,5 +83,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "074a6444-c051-40e5-9517-a30245f0d691"
   }
 }

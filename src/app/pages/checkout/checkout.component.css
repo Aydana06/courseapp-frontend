@@ -1,0 +1,49 @@
+.checkout {
+  max-width: 800px;
+  margin: auto;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.checkout h2 {
+  color: #667eea;
+}
+
+.checkout-items {
+  margin-bottom: 1rem;
+}
+
+.checkout-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid #eee;
+  padding: 0.5rem 0;
+}
+
+.total {
+  font-size: 1.2rem;
+  margin: 1rem 0;
+}
+
+.price {
+  color: #667eea;
+  font-weight: bold;
+}
+
+ol li {
+  margin-bottom: 0.5rem;
+}
+
+button {
+  background: #667eea;
+  color: white;
+  margin-top: 20px;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover {
+  background: #0056b3;
+}

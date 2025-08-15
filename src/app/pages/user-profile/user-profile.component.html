@@ -1,0 +1,152 @@
+<div class="user-profile">
+  <div class="container">
+    <div class="profile-header">
+      <h1>Хэрэглэгчийн профайл</h1>
+      <p>Хэрэглэгчийн мэдээлэл болон тохиргоог удирдах</p>
+    </div>
+
+    <div class="profile-content">
+      <div class="profile-card">
+        <div class="profile-avatar">
+          <div class="avatar">
+            {{ user?.firstName?.charAt(0) }}{{ user?.lastName?.charAt(0) }}
+          </div>
+          <h2>{{ user?.name }}</h2>
+          <p>{{ user?.email }}</p>
+        </div>
+
+        <div class="profile-actions">
+          <button
+            *ngIf="!isEditing"
+            (click)="toggleEdit()"
+            class="btn btn-primary"
+          >
+            Засах
+          </button>
+          <div *ngIf="isEditing" class="edit-actions">
+            <button (click)="saveProfile()" class="btn btn-primary">
+              Хадгалах
+            </button>
+            <button (click)="cancelEdit()" class="btn btn-outline">
+              Цуцлах
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-details">
+        <div class="detail-section">
+          <h3>Хувийн мэдээлэл</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>Нэр</label>
+              <input
+                *ngIf="isEditing"
+                type="text"
+                [(ngModel)]="profileData.firstName"
+                class="form-input"
+              />
+              <span *ngIf="!isEditing">{{ profileData.firstName }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Овог</label>
+              <input
+                *ngIf="isEditing"
+                type="text"
+                [(ngModel)]="profileData.lastName"
+                class="form-input"
+              />
+              <span *ngIf="!isEditing">{{ profileData.lastName }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Имэйл</label>
+              <input
+                *ngIf="isEditing"
+                type="email"
+                [(ngModel)]="profileData.email"
+                class="form-input"
+              />
+              <span *ngIf="!isEditing">{{ profileData.email }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Утас</label>
+              <input
+                *ngIf="isEditing"
+                type="tel"
+                [(ngModel)]="profileData.phone"
+                class="form-input"
+              />
+              <span *ngIf="!isEditing">{{
+                profileData.phone || "Оруулаагүй"
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Тайлбар</h3>
+          <div class="detail-item">
+            <textarea
+              *ngIf="isEditing"
+              [(ngModel)]="profileData.bio"
+              placeholder="Өөрийнхөө талаар товч тайлбар бичнэ үү..."
+              class="form-textarea"
+            ></textarea>
+            <p *ngIf="!isEditing">
+              {{ profileData.bio || "Тайлбар оруулаагүй" }}
+            </p>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Тохиргоо</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>Хэл</label>
+              <select
+                *ngIf="isEditing"
+                [(ngModel)]="profileData.preferences.language"
+                class="form-select"
+              >
+                <option value="Монгол">Монгол</option>
+                <option value="English">English</option>
+              </select>
+              <span *ngIf="!isEditing">{{
+                profileData.preferences.language
+              }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Мэдэгдэл</label>
+              <input
+                *ngIf="isEditing"
+                type="checkbox"
+                [(ngModel)]="profileData.preferences.notifications"
+                class="form-checkbox"
+              />
+              <span *ngIf="!isEditing">{{
+                profileData.preferences.notifications ? "Идэвхтэй" : "Идэвхгүй"
+              }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Мэдээний жагсаалт</label>
+              <input
+                *ngIf="isEditing"
+                type="checkbox"
+                [(ngModel)]="profileData.preferences.newsletter"
+                class="form-checkbox"
+              />
+              <span *ngIf="!isEditing">{{
+                profileData.preferences.newsletter ? "Идэвхтэй" : "Идэвхгүй"
+              }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

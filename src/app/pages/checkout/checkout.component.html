@@ -1,0 +1,36 @@
+<div class="checkout">
+  <h2>Баярлалаа, та доорхи дансны дугаараар төлбөрөө хийнэ үү.</h2>
+  <p>Энд таны захиалсан сургалтуудыг харуулж байна:</p>
+
+  <div class="checkout-items">
+    <div *ngFor="let item of items" class="checkout-item">
+      <img [src]="item.image" [alt]="item.title" width="80" />
+      <div>
+        <h4>{{ item.title }}</h4>
+        <p>{{ item.price | number }}₮</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="total">
+    <strong>Нийт: </strong>
+    <span class="price">{{ total | number }} ₮</span>
+  </div>
+
+  <hr />
+
+  <h4>Та дараах алхмуудын дагуу төлбөрөө шилжүүлнэ үү:</h4>
+  <ol>
+    <li>
+      Хаан Банк <strong>5197279282</strong>, Баттулга Болд данс руу
+      <strong>{{ total | number }} ₮</strong> шилжүүлнэ.
+    </li>
+    <li>Гүйлгээний утганд таны утасны дугаараа бичнэ.</li>
+    <li>
+      Төлбөр амжилттай хийгдсэний дараа утасны дугаар руу мессеж илгээж мэдэгдэх
+      болно.
+    </li>
+  </ol>
+
+  <button routerLink="/cart" class="btn btn-primary">Сагс руу буцах</button>
+</div>

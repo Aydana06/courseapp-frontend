@@ -1,0 +1,120 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <h1>Бүртгүүлэх</h1>
+      <p>Шинэ хэрэглэгчийн бүртгэл үүсгэнэ үү</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="register-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">Нэр</label>
+          <input
+            type="text"
+            id="firstName"
+            name="firstName"
+            [(ngModel)]="registerData.firstName"
+            required
+            class="form-input"
+            placeholder="Нэрээ оруулна уу"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Овог</label>
+          <input
+            type="text"
+            id="lastName"
+            name="lastName"
+            [(ngModel)]="registerData.lastName"
+            required
+            class="form-input"
+            placeholder="Овгоо оруулна уу"
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="phone">Утасны дугаар</label>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          [(ngModel)]="registerData.phone"
+          required
+          class="form-input"
+          placeholder="Утасны дугаараа оруулна уу"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Имэйл хаяг</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="registerData.email"
+          required
+          class="form-input"
+          placeholder="Имэйл хаягаа оруулна уу"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Нууц үг</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="registerData.password"
+          required
+          class="form-input"
+          placeholder="Нууц үгээ оруулна уу"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Нууц үг давтах</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          [(ngModel)]="registerData.confirmPassword"
+          required
+          class="form-input"
+          placeholder="Нууц үгээ дахин оруулна уу"
+        />
+      </div>
+
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input type="checkbox" name="terms" required />
+          <span class="checkmark"></span>
+          <span
+            >Би <a href="#" class="terms-link">үйлчилгээний нөхцөл</a> болон
+            <a href="#" class="terms-link">нууцлалын бодлого</a>-тай танилцаж,
+            зөвшөөрч байна</span
+          >
+        </label>
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="success-message" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+        <span *ngIf="isLoading" class="loading-spinner"></span>
+        {{ isLoading ? "Бүртгэж байна..." : "Бүртгүүлэх" }}
+      </button>
+    </form>
+
+    <div class="register-footer">
+      <p>
+        Бүртгэлтэй юу? <a routerLink="/login" class="login-link">Нэвтрэх</a>
+      </p>
+    </div>
+  </div>
+</div>

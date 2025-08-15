@@ -1,0 +1,29 @@
+<div class="cart">
+  <h1 page-header>Таны сагс</h1>
+
+  <div *ngIf="items.length === 0">
+    Таны сагс хоосон байна.
+    <a (click)="routeCourse()">Энд дарж</a> сургалтуудаас сонирхоно уу.
+  </div>
+
+  <ul>
+    <li *ngFor="let item of items" class="cart-item">
+      <img [src]="item.image" [alt]="item.title" width="60" />
+      <div class="cart-info">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.price | number }}₮</p>
+      </div>
+      <button (click)="remove(item.id)" class="btn btn-outline btn-sm">
+        Устгах
+      </button>
+    </li>
+  </ul>
+  <button
+    *ngIf="items.length > 0"
+    type="button"
+    (click)="buyCourse()"
+    class="btn btn-danger"
+  >
+    Худалдаж авах
+  </button>
+</div>

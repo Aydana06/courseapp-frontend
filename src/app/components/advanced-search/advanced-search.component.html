@@ -1,0 +1,95 @@
+<div class="advanced-search">
+  <div class="search-header">
+    <h3>Дэлгэрэнгүй хайлт</h3>
+    <button (click)="onClearFilters()" class="clear-btn">Цэвэрлэх</button>
+  </div>
+
+  <div class="search-filters">
+    <!-- Search Query -->
+    <div class="filter-group">
+      <label>Хайх</label>
+      <input
+        type="text"
+        [(ngModel)]="filters.query"
+        (input)="onSearch()"
+        placeholder="Сургалтын нэр, тайлбар, багш..."
+        class="search-input"
+      />
+    </div>
+
+    <!-- Category Filter -->
+    <div class="filter-group">
+      <label>Ангилал</label>
+      <select
+        [(ngModel)]="filters.category"
+        (change)="onSearch()"
+        class="filter-select"
+      >
+        <option value="all">Бүгд</option>
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Level Filter -->
+    <div class="filter-group">
+      <label>Түвшин</label>
+      <select
+        [(ngModel)]="filters.level"
+        (change)="onSearch()"
+        class="filter-select"
+      >
+        <option value="all">Бүгд</option>
+        <option *ngFor="let level of levels" [value]="level">
+          {{ level }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Language Filter -->
+    <div class="filter-group">
+      <label>Хэл</label>
+      <select
+        [(ngModel)]="filters.language"
+        (change)="onSearch()"
+        class="filter-select"
+      >
+        <option value="all">Бүгд</option>
+        <option *ngFor="let language of languages" [value]="language">
+          {{ language }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Instructor Filter -->
+    <div class="filter-group">
+      <label>Багш</label>
+      <select
+        [(ngModel)]="filters.instructor"
+        (change)="onSearch()"
+        class="filter-select"
+      >
+        <option value="all">Бүгд</option>
+        <option *ngFor="let instructor of instructors" [value]="instructor">
+          {{ instructor }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Rating Filter -->
+    <div class="filter-group">
+      <label>Үнэлгээ</label>
+      <select
+        [(ngModel)]="filters.rating"
+        (change)="onSearch()"
+        class="filter-select"
+      >
+        <option value="">Бүгд</option>
+        <option value="4.5">4.5+ од</option>
+        <option value="4.0">4.0+ од</option>
+        <option value="3.5">3.5+ од</option>
+      </select>
+    </div>
+  </div>
+</div>

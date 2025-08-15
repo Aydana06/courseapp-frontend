@@ -1,0 +1,122 @@
+<div class="courses-page">
+  <div class="container">
+    <div class="page-header">
+      <h1>Сургалтууд</h1>
+      <p>Танд тохирсон сургалтыг сонгож, шинэ ур чадвар эзэмшээрэй</p>
+    </div>
+
+    <!-- Basic Search and Filters -->
+    <div class="search-filters">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Сургалт хайх..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearchChange($event)"
+          class="search-input"
+        />
+        <button (click)="toggleAdvancedSearch()" class="advanced-search-btn">
+          {{ showAdvancedSearch ? "Энгийн хайлт" : "Дэлгэрэнгүй хайлт" }}
+        </button>
+      </div>
+
+      <div class="filter-row">
+        <select
+          [(ngModel)]="selectedCategory"
+          (change)="onCategoryChange($event)"
+          class="filter-select"
+        >
+          <option value="all">Бүх ангилал</option>
+          <option *ngFor="let category of categories" [value]="category">
+            {{ category }}
+          </option>
+        </select>
+
+        <select
+          [(ngModel)]="selectedLevel"
+          (change)="onLevelChange($event)"
+          class="filter-select"
+        >
+          <option value="all">Бүх түвшин</option>
+          <option *ngFor="let level of levels" [value]="level">
+            {{ level }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Advanced Search Component -->
+    <app-advanced-search
+      *ngIf="showAdvancedSearch"
+      (searchResults)="onAdvancedSearchResults($event)"
+    >
+    </app-advanced-search>
+
+    <!-- Results Summary -->
+    <div class="results-summary">
+      <p>{{ filteredCourses.length }} сургалт олдлоо</p>
+    </div>
+
+    <!-- Courses Grid -->
+    <div class="courses-grid">
+      <div *ngFor="let course of filteredCourses" class="course-card">
+        <div class="course-image" [routerLink]="['/course', course.id]">
+          <img
+            [src]="course.image"
+            [alt]="course.title"
+            onerror="this.src='assets/images/course-placeholder.jpg'"
+          />
+          <div class="course-level">{{ course.level }}</div>
+        </div>
+
+        <div class="course-content">
+          <div class="course-category">{{ course.category }}</div>
+          <a [routerLink]="['/course', course.id]"
+            ><h3>{{ course.title }}</h3></a
+          >
+          <p class="course-description">{{ course.description }}</p>
+
+          <div class="course-meta">
+            <div class="instructor">
+              <i class="icon-user"></i>
+              {{ course.instructor }}
+            </div>
+            <div class="duration">
+              <i class="icon-clock"></i>
+              {{ course.duration }}
+            </div>
+          </div>
+
+          <div class="course-stats">
+            <div class="rating">
+              <span class="stars">★★★★★</span>
+              <span class="rating-value">{{ course.rating }}</span>
+            </div>
+            <div class="students">{{ course.students }} суралцагч</div>
+          </div>
+
+          <div class="course-footer">
+            <div class="price">{{ course.price | number }}₮</div>
+
+            <button
+              *ngIf="authService.isAuthenticated()"
+              class="btn btn-outline"
+              (click)="addToCart(course)"
+            >
+              Сагсанд нэмэх
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div *ngIf="filteredCourses.length === 0" class="no-results">
+      <h3>Илэрц олдсонгүй</h3>
+      <p>
+        Таны хайлтад тохирох сургалт олдсонгүй. Өөр түлхүүр үг ашиглан дахин
+        оролдоно уу.
+      </p>
+    </div>
+  </div>
+</div>
