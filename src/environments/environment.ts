@@ -1,10 +1,10 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000',
+  apiUrl: 'http://localhost:4000',
   appName: 'Төлбөртэй Сургалтын Вэбсайт',
   version: '1.0.0',
   features: {
-    enableMockData: true,
+    enableMockData: false,
     enableAnalytics: false,
     enableLogging: true
   },

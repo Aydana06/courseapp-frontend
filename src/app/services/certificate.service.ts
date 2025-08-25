@@ -1,26 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-
-export interface Certificate {
-  id: string;
-  userId: number;
-  courseId: number;
-  courseName: string;
-  userName: string;
-  issueDate: Date;
-  completionDate: Date;
-  grade?: string;
-  certificateUrl?: string;
-  status: 'pending' | 'issued' | 'expired';
-}
-
-export interface CertificateTemplate {
-  id: string;
-  name: string;
-  template: string;
-  backgroundImage?: string;
-  signatureImage?: string;
-}
+import { Certificate, CertificateTemplate } from '../models/models';
 
 @Injectable({
   providedIn: 'root'

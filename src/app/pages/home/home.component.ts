@@ -1,70 +1,72 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { CartService, Course } from '../../services/cart.service';
+import { CartService } from '../../services/cart.service';
+import { Course, Comment } from '../../models/models';
 import { AuthService } from '../../services/auth.service';
+import { CourseService } from '../../services/course.service';
+import { CommentService } from '../../services/comment.service';
+import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
-  constructor(private cartService: CartService, public authService: AuthService) {
+export class HomeComponent implements OnInit {
+  courses$!: Observable<Course[]>;
+  comments$!: Observable<Comment[]>;
+  featuredCourses$!: Observable<Course[]>;
+
+  showForm = false;
+  newComment: Comment = { name: '', role: '', content: '', rating: 5 };
+
+  rating = [1, 2, 3, 4, 5];
+
+  constructor(
+    private cartService: CartService,
+    public authService: AuthService,
+    private courseService: CourseService,
+    private commentService: CommentService
+  ) {}
+
+  ngOnInit() {
+    this.loadCourses(3);
+    this.loadComments();
   }
 
-  featuredCourses: Course[] = [
-    {
-      id: 1,
-      title: 'Angular 20-р хувилбар',
-      description: 'Angular-ийн хамгийн сүүлийн үеийн онцлогуудыг сурна уу',
-      price: 150000,
-      duration: '20 цаг',
-      image: 'assets/images/angular.png',
-      instructor: 'Бат-Эрдэнэ'
-    },
-    {
-      id: 2,
-      title: 'React.js Мастер класс',
-      description: 'React.js-ийн бүх чухал онцлогуудыг практик дадлагатай',
-      price: 120000,
-      duration: '15 цаг',
-      image: 'assets/images/react.png',
-      instructor: 'Сүхээ'
-    },
-    {
-      id: 3,
-      title: 'Node.js Backend Development',
-      description: 'Node.js ашиглан backend систем хөгжүүлэх',
-      price: 180000,
-      duration: '25 цаг',
-      image: 'assets/images/nodejs.png',
-      instructor: 'Төгсбаатар'
-    }
-  ];
+  toggleForm(): void {
+    this.showForm = !this.showForm;
+  }
 
-  testimonials = [
-    {
-      name: 'Болд',
-      role: 'Frontend Developer',
-      content: 'Энэ сургалт миний карьерт маш их тустай байсан. Одоо илүү сайн ажил хийж байна.',
-      rating: 5
-    },
-    {
-      name: 'Алтанцэцэг',
-      role: 'Student',
-      content: 'Багш нар маш сайн заадаг, материал нь ойлгомжтой байсан.',
-      rating: 5
-    },
-    {
-      name: 'Энхбат',
-      role: 'Software Engineer',
-      content: 'Практик дадлага хийх боломжтой байсан нь маш сайн.',
-      rating: 4
-    }
-  ];
+  loadCourses(id: number) {
+    this.courses$ = this.courseService.getCoursesUpToId(id);
+    this.featuredCourses$ = this.courses$; // одоохондоо адилхан
+  }
+
+  addComment(): void {
+    if (!this.newComment.name || !this.newComment.content) return;
+
+    this.commentService.addComment(this.newComment).subscribe(() => {
+      this.newComment = { name: '', role: '', content: '', rating: 5 };
+      this.showForm = false;
+      this.loadComments(); // refresh
+    });
+  }
+
+  loadComments(): void {
+    this.comments$ = this.commentService.getComments();
+  }
+
+  deleteComment(id: number): void {
+    this.commentService.deleteComment(id).subscribe({
+      next: () => this.loadComments(), // refresh
+      error: (err) => console.error('Алдаа гарлаа:', err)
+    });
+  }
 
   addToCart(course: Course) {
     this.cartService.addToCart(course);

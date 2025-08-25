@@ -1,15 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-
-export interface Course {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-  description: string;
-  duration: string;
-  instructor: string;
-}
+import { Course } from '../models/models';
 
 @Injectable({
   providedIn: 'root'

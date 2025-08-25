@@ -19,7 +19,10 @@
     <div class="container">
       <h2 class="section-title">Онцлох Сургалтууд</h2>
       <div class="courses-grid">
-        <div class="course-card" *ngFor="let course of featuredCourses">
+        <div
+          class="course-card"
+          *ngFor="let course of featuredCourses$ | async"
+        >
           <div class="course-image" [routerLink]="['/course', course.id]">
             <img [src]="course.image" [alt]="course.title" />
           </div>
@@ -79,24 +82,59 @@
     <div class="container">
       <h2 class="section-title">Сурагчдын сэтгэгдэл</h2>
       <div class="testimonials-grid">
-        <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+        <div class="testimonial-card" *ngFor="let comment of comments$ | async">
           <div class="testimonial-content">
-            <p>{{ testimonial.content }}</p>
+            <p>{{ comment.content }}</p>
           </div>
           <div class="testimonial-author">
-            <h4>{{ testimonial.name }}</h4>
-            <span>{{ testimonial.role }}</span>
+            <h4>{{ comment.name }}</h4>
+            <span>{{ comment.role }}</span>
             <div class="rating">
               <span
-                *ngFor="let star of [1, 2, 3, 4, 5]"
+                *ngFor="let star of rating"
                 class="star"
-                [class.filled]="star <= testimonial.rating"
+                [class.filled]="star <= comment.rating"
                 >★</span
               >
             </div>
+            <button (click)="deleteComment(comment.id!)" class="delete-btn">
+              Устгах
+            </button>
           </div>
         </div>
       </div>
+
+      <!-- Сэтгэгдэл бичих товч -->
+      <div class="add-comment-btn">
+        <button (click)="toggleForm()">
+          {{ showForm ? "Болих" : "Сэтгэгдэл бичих" }}
+        </button>
+      </div>
+
+      <!-- Form зөвхөн showForm=true үед гарна -->
+      <form *ngIf="showForm" (ngSubmit)="addComment()" class="comment-form">
+        <input
+          [(ngModel)]="newComment.name"
+          name="name"
+          placeholder="Таны нэр"
+          required
+        />
+        <input
+          [(ngModel)]="newComment.role"
+          name="role"
+          placeholder="Таны албан тушаал"
+        />
+        <textarea
+          [(ngModel)]="newComment.content"
+          name="content"
+          placeholder="Сэтгэгдэл бичих..."
+          required
+        ></textarea>
+        <select [(ngModel)]="newComment.rating" name="rating">
+          <option *ngFor="let r of rating" [value]="r">{{ r }}</option>
+        </select>
+        <button type="submit">Нэмэх</button>
+      </form>
     </div>
   </section>
 

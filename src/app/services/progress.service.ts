@@ -1,26 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-
-export interface CourseProgress {
-  courseId: number;
-  userId: number;
-  progress: number;
-  completedLessons: number[];
-  totalLessons: number;
-  lastAccessed: Date;
-  startDate: Date;
-  estimatedCompletion?: Date;
-}
-
-export interface LessonProgress {
-  lessonId: number;
-  courseId: number;
-  userId: number;
-  completed: boolean;
-  completedAt?: Date;
-  timeSpent: number; 
-  quizScore?: number;
-}
+import { CourseProgress, LessonProgress } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +10,7 @@ export class ProgressService {
     {
       courseId: 1,
       userId: 1,
-      progress: 65,
+      progress: 100,
       completedLessons: [1, 2, 3],
       totalLessons: 5,
       lastAccessed: new Date('2025-01-15'),
@@ -40,7 +20,7 @@ export class ProgressService {
     {
       courseId: 2,
       userId: 1,
-      progress: 30,
+      progress: 40,
       completedLessons: [1],
       totalLessons: 5,
       lastAccessed: new Date('2025-01-10'),

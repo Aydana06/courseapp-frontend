@@ -33,14 +33,6 @@
           <p>Дундаж явц</p>
         </div>
       </div>
-
-      <div class="stat-card">
-        <div class="stat-icon">🏆</div>
-        <div class="stat-content">
-          <h3>{{ certificates.length }}</h3>
-          <p>Гэрчилгээ</p>
-        </div>
-      </div>
     </div>
 
     <!-- Main Content -->
@@ -61,7 +53,7 @@
               <img
                 [src]="course.image"
                 [alt]="course.title"
-                onerror="this.src='assets/images/course-placeholder.png'"
+                (error)="onImageError($event)"
               />
             </div>
 
@@ -118,7 +110,8 @@
             <div class="certificate-icon">🏆</div>
             <div class="certificate-info">
               <h4>{{ certificate.courseName }}</h4>
-              <p>{{ formatDate(certificate.issueDate) }}</p>
+              <p>{{ certificate.issueDate | date : "yyyy-MM-dd" }}</p>
+
               <span class="grade" *ngIf="certificate.grade">{{
                 certificate.grade
               }}</span>

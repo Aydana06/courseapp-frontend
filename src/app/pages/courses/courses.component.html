@@ -66,11 +66,11 @@
             [alt]="course.title"
             onerror="this.src='assets/images/course-placeholder.jpg'"
           />
-          <div class="course-level">{{ course.level }}</div>
+          <div class="course-level">{{ course.details?.[0]?.level }}</div>
         </div>
 
         <div class="course-content">
-          <div class="course-category">{{ course.category }}</div>
+          <div class="course-category">{{ course.details?.[0]?.category }}</div>
           <a [routerLink]="['/course', course.id]"
             ><h3>{{ course.title }}</h3></a
           >
@@ -90,13 +90,20 @@
           <div class="course-stats">
             <div class="rating">
               <span class="stars">★★★★★</span>
-              <span class="rating-value">{{ course.rating }}</span>
+              <span
+                class="rating-value"
+                >{{ course.details?.[0]?.rating || 0 }}</span
+              >
             </div>
-            <div class="students">{{ course.students }} суралцагч</div>
+            <div class="students">
+              {{ course.details?.[0]?.students || 0 }} суралцагч
+            </div>
           </div>
 
           <div class="course-footer">
-            <div class="price">{{ course.price | number }}₮</div>
+            <div class="price">
+              {{ course.details?.[0]?.students || 0 }} суралцагч
+            </div>
 
             <button
               *ngIf="authService.isAuthenticated()"

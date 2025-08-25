@@ -4,39 +4,7 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { ApiService, ApiResponse } from './api.service';
 import { environment } from '../../environments/environment';
-
-export interface User {
-  phone: string;
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  name: string;
-  avatar?: string;
-  role?: string;
-  createdAt?: string;
-  lastLoginAt?: string;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  phone: string;
-  confirmPassword?: string;
-}
-
-export interface AuthResponse {
-  user: User;
-  token: string;
-  refreshToken: string;
-}
+import { AuthResponse, CourseProgress, LoginRequest, RegisterRequest, User } from '../models/models'; 
 
 @Injectable({
   providedIn: 'root'
@@ -89,30 +57,40 @@ export class AuthService {
   }
 
   private mockLogin(email: string, password: string): Observable<User> {
-    return new Observable(observer => {
-      setTimeout(() => {
-        if (email === 'bolataidana73@gmail.com' && password === 'qwerty') {
-          const user: User = {
-            id: 1,
-            firstName: 'Bolat',
-            lastName: 'Aydana',
-            email: email,
-            // phone: userData.phone, 
-            phone: '90908990',
-            name: 'Bolat Aydana',
-            role: 'student',
-            createdAt: new Date().toISOString(),
-            lastLoginAt: new Date().toISOString()
-          };
-          this.setUser(user);
-          observer.next(user);
-          observer.complete();
-        } else {
-          observer.error(new Error('Нэвтрэх нэр эсвэл нууц үг буруу байна'));
-        }
-      }, 1000);
-    });
-  }
+  return new Observable(observer => {
+    setTimeout(() => {
+      if (email === 'bolataidana73@gmail.com' && password === '123456') {
+        const user: User = {
+          id: 1,
+          firstName: 'Bolat',
+          lastName: 'Aydana',
+          email: email,
+          phone: '90908990',
+          name: 'Bolat Aydana',
+          role: 'student',
+          createdAt: new Date().toISOString(),
+          lastLoginAt: new Date().toISOString(),
+          bio: '',
+          preferences: {
+            language: 'Монгол',
+            notifications: true,
+            newsletter: false
+          },
+          enrolledCourses: [3, 4, 5],
+          progress: [],
+          certificates: [
+            { id: '1', courseName: 'Angular Basics', issueDate: new Date(), grade: 'A' }
+          ]
+        };
+        this.setUser(user);
+        observer.next(user);
+        observer.complete();
+      } else {
+        observer.error(new Error('Нэвтрэх нэр эсвэл нууц үг буруу байна'));
+      }
+    }, 1000);
+  });
+}
 
   register(userData: RegisterRequest): Observable<User> {
     // Use mock data in development or when API is not available
@@ -138,26 +116,36 @@ export class AuthService {
     );
   }
 
-  private mockRegister(userData: RegisterRequest): Observable<User> {
-    return new Observable(observer => {
-      setTimeout(() => {
-        const user: User = {
-          id: Date.now(),
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          phone: userData.phone,
-          email: userData.email,
-          name: `${userData.firstName} ${userData.lastName}`,
-          role: 'student',
-          createdAt: new Date().toISOString(),
-          lastLoginAt: new Date().toISOString()
-        };
-        this.setUser(user);
-        observer.next(user);
-        observer.complete();
-      }, 1000);
-    });
-  }
+ private mockRegister(userData: RegisterRequest): Observable<User> {
+  return new Observable(observer => {
+    setTimeout(() => {
+      const user: User = {
+        id: Date.now(),
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        phone: userData.phone,
+        email: userData.email,
+        name: `${userData.firstName} ${userData.lastName}`,
+        role: 'student',
+        createdAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString(),
+        bio: '',
+        preferences: {
+          language: 'Монгол',
+          notifications: true,
+          newsletter: false
+        },
+        enrolledCourses: [],
+        progress: [],
+        certificates: []
+      };
+      this.setUser(user);
+      observer.next(user);
+      observer.complete();
+    }, 1000);
+  });
+}
+
 
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {

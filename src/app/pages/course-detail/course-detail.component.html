@@ -20,11 +20,14 @@
           </div>
           <div class="meta-item">
             <span class="meta-label">Түвшин:</span>
-            <span class="meta-value">{{ course.level }}</span>
+            <span class="meta-value">{{ course.details?.[0]?.level }}</span>
           </div>
           <div class="meta-item">
             <span class="meta-label">Сурагч:</span>
-            <span class="meta-value">{{ course.students }}</span>
+            <span
+              class="meta-value"
+              >{{ course.details?.[0]?.students || 0 }}</span
+            >
           </div>
         </div>
 
@@ -33,12 +36,13 @@
             <span
               *ngFor="let star of [1, 2, 3, 4, 5]"
               class="star"
-              [class.filled]="star <= course.rating"
+              [class.filled]="star <= (course.details?.[0]?.rating ?? 0)"
               >★</span
             >
           </div>
           <span class="rating-text"
-            >{{ course.rating }} ({{ course.students }} сурагч)</span
+            >{{ course.details?.[0]?.rating ?? 0}}
+            ({{ course.details?.[0]?.students ?? 0 }} сурагч)</span
           >
         </div>
 
@@ -81,7 +85,7 @@
           <div class="lessons-list">
             <div
               class="lesson-item"
-              *ngFor="let lesson of course.lessons; let i = index"
+              *ngFor="let lesson of course.details?.[0]?.lessons; let i = index"
             >
               <div class="lesson-number">{{ i + 1 }}</div>
               <div class="lesson-info">
@@ -99,7 +103,7 @@
         <div class="content-section">
           <h2>Шаардлага</h2>
           <ul class="requirements-list">
-            <li *ngFor="let requirement of course.requirements">
+            <li *ngFor="let requirement of course.details?.[0]?.requirements">
               {{ requirement }}
             </li>
           </ul>
@@ -109,7 +113,9 @@
         <div class="content-section">
           <h2>Сургах зүйлс</h2>
           <ul class="outcomes-list">
-            <li *ngFor="let outcome of course.outcomes">{{ outcome }}</li>
+            <li *ngFor="let outcome of course.details?.[0]?.outcomes">
+              {{ outcome }}
+            </li>
           </ul>
         </div>
       </div>

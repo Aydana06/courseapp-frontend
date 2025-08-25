@@ -4,7 +4,7 @@ export const environment = {
   appName: 'Төлбөртэй Сургалтын Вэбсайт',
   version: '1.0.0',
   features: {
-    enableMockData: false,
+    enableMockData: true,
     enableAnalytics: true,
     enableLogging: false
   },

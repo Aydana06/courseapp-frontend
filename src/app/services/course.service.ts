@@ -3,42 +3,7 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { ApiService, ApiResponse } from './api.service';
 import { environment } from '../../environments/environment';
-
-export interface Course {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  duration: string;
-  level: string;
-  category: string;
-  image: string;
-  instructor: string;
-  rating: number;
-  students: number;
-  lessons?: Lesson[];
-  requirements?: string[];
-  outcomes?: string[];
-  tags?: string[];
-  language?: string;
-  lastUpdated?: string;
-}
-
-export interface Lesson {
-  title: string;
-  duration: string;
-  type: string;
-}
-
-export interface SearchFilters {
-  query?: string;
-  category?: string;
-  level?: string;
-  priceRange?: { min: number; max: number };
-  rating?: number;
-  language?: string;
-  instructor?: string;
-}
+import { Course, SearchFilters } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -53,32 +18,33 @@ export class CourseService {
       description: 'Angular-ийн хамгийн сүүлийн үеийн онцлогуудыг сурна уу. Components, Services, Routing, Forms, HTTP Client зэргийг дэлгэрэнгүй.',
       price: 150000,
       duration: '20 цаг',
-      level: 'Дунд',
-      category: 'Frontend',
       image: 'assets/images/angular.png',
       instructor: 'Бат-Эрдэнэ',
-      rating: 4.8,
-      students: 245,
-      language: 'Монгол',
-      lastUpdated: '2025-01-15',
-      tags: ['Angular', 'TypeScript', 'Frontend', 'Web Development'],
-      lessons: [
-        { title: 'Angular-ийн үндэс', duration: '45 мин', type: 'video' },
-        { title: 'Components болон Templates', duration: '60 мин', type: 'video' },
-        { title: 'Services болон Dependency Injection', duration: '75 мин', type: 'video' },
-        { title: 'Routing болон Navigation', duration: '90 мин', type: 'video' },
-        { title: 'Forms болон Validation', duration: '120 мин', type: 'video' }
-      ],
-      requirements: [
+      details: [{
+        level: 'Дунд',
+        category: 'Frontend',
+        rating: 4.8,
+        students: 245,
+        language: 'Монгол',
+        lastUpdated: '2025-01-15',
+        tags: ['Angular', 'TypeScript', 'Frontend', 'Web Development'],
+        lessons: [
+          { title: 'Angular-ийн үндэс', duration: '45 мин', type: 'video' },
+          { title: 'Components болон Templates', duration: '60 мин', type: 'video' },
+          { title: 'Services болон Dependency Injection', duration: '75 мин', type: 'video' },
+          { title: 'Routing болон Navigation', duration: '90 мин', type: 'video' },
+          { title: 'Forms болон Validation', duration: '120 мин', type: 'video' }
+        ],
+        requirements: [
         'JavaScript-ийн үндсэн мэдлэг',
         'HTML/CSS мэдлэг',
         'TypeScript-ийн үндсэн ойлголт'
-      ],
-      outcomes: [
+        ],
+        outcomes: [
         'Angular framework-ийн бүх чухал онцлогуудыг сурах',
         'Real-world application хөгжүүлэх',
         'Best practices болон patterns сурах'
-      ]
+        ]}],
     },
     {
       id: 2,
@@ -86,22 +52,23 @@ export class CourseService {
       description: 'React.js-ийн бүх чухал онцлогуудыг практик дадлагатай. Hooks, Context, Redux, Router зэргийг сурна.',
       price: 120000,
       duration: '15 цаг',
-      level: 'Дунд',
-      category: 'Frontend',
       image: 'assets/images/react.png',
       instructor: 'Сүхээ',
-      rating: 4.7,
-      students: 189,
-      language: 'Монгол',
-      lastUpdated: '2024-01-10',
-      tags: ['React', 'JavaScript', 'Frontend', 'Web Development'],
-      lessons: [
-        { title: 'React-ийн үндэс', duration: '45 мин', type: 'video' },
-        { title: 'Components болон Props', duration: '60 мин', type: 'video' },
-        { title: 'State болон Lifecycle', duration: '75 мин', type: 'video' },
-        { title: 'Hooks болон Functional Components', duration: '90 мин', type: 'video' },
-        { title: 'Context API болон Redux', duration: '120 мин', type: 'video' }
-      ],
+      details: [{
+        level: 'Дунд',
+        category: 'Frontend',
+        rating: 4.7,
+        students: 189,
+        language: 'Монгол',
+        lastUpdated: '2024-01-10',
+        tags: ['React', 'JavaScript', 'Frontend', 'Web Development'],
+        lessons: [
+          { title: 'React-ийн үндэс', duration: '45 мин', type: 'video' },
+          { title: 'Components болон Props', duration: '60 мин', type: 'video' },
+          { title: 'State болон Lifecycle', duration: '75 мин', type: 'video' },
+          { title: 'Hooks болон Functional Components', duration: '90 мин', type: 'video' },
+          { title: 'Context API болон Redux', duration: '120 мин', type: 'video' }
+        ],
       requirements: [
         'JavaScript-ийн үндсэн мэдлэг',
         'HTML/CSS мэдлэг',
@@ -111,7 +78,7 @@ export class CourseService {
         'React-ийн бүх чухал онцлогуудыг сурах',
         'Modern React patterns сурах',
         'State management шийдлүүд'
-      ]
+      ]}]
     },
     {
       id: 3,
@@ -119,10 +86,11 @@ export class CourseService {
       description: 'Node.js ашиглан backend систем хөгжүүлэх. Express.js, MongoDB, Authentication, API development.',
       price: 180000,
       duration: '25 цаг',
-      level: 'Дунд',
-      category: 'Backend',
       image: 'assets/images/nodejs.png',
       instructor: 'Төгсбаатар',
+      details: [{
+        level: 'Дунд',
+      category: 'Backend',
       rating: 4.9,
       students: 156,
       language: 'Монгол',
@@ -145,6 +113,7 @@ export class CourseService {
         'RESTful API хөгжүүлэх',
         'Database design болон management'
       ]
+      }]
     },
     {
       id: 4,
@@ -152,10 +121,11 @@ export class CourseService {
       description: 'Python програмчлалын үндэснээс эхлээд advanced topics хүртэл. Data Science, Web Development.',
       price: 100000,
       duration: '18 цаг',
-      level: 'Эхлэгч',
-      category: 'Programming',
       image: 'assets/images/python.png',
       instructor: 'Алтанцэцэг',
+      details: [{
+        level: 'Эхлэгч',
+      category: 'Programming',
       rating: 4.6,
       students: 312,
       language: 'Монгол',
@@ -178,6 +148,7 @@ export class CourseService {
         'Problem solving skills',
         'Programming fundamentals'
       ]
+      }]
     },
     {
       id: 5,
@@ -185,10 +156,11 @@ export class CourseService {
       description: 'JavaScript-ийн хамгийн сүүлийн үеийн онцлогуудыг сурна. ES6, ES7, ES8, ES9, ES10.',
       price: 80000,
       duration: '12 цаг',
-      level: 'Эхлэгч',
-      category: 'Programming',
       image: 'assets/images/javascript.png',
       instructor: 'Болд',
+     details: [{
+       level: 'Эхлэгч',
+      category: 'Programming',
       rating: 4.5,
       students: 423,
       language: 'Монгол',
@@ -211,6 +183,7 @@ export class CourseService {
         'Async programming patterns',
         'Best practices болон coding standards'
       ]
+     }]
     },
     {
       id: 6,
@@ -218,10 +191,11 @@ export class CourseService {
       description: 'Vue.js framework-ийн бүх онцлогуудыг сурна. Components, Vuex, Vue Router, Composition API.',
       price: 110000,
       duration: '16 цаг',
-      level: 'Дунд',
-      category: 'Frontend',
       image: 'assets/images/vuejs.png',
       instructor: 'Энхбат',
+      details: [{
+      level: 'Дунд',
+      category: 'Frontend',
       rating: 4.4,
       students: 98,
       language: 'Монгол',
@@ -244,6 +218,7 @@ export class CourseService {
         'State management patterns',
         'Modern Vue.js development'
       ]
+      }]
     }
   ];
 
@@ -262,6 +237,26 @@ export class CourseService {
       catchError(() => of(this.courses)) // Fallback to mock data on error
     );
   }
+
+  getCoursesUpToId(maxId: number): Observable<Course[]> {
+  if (environment.features.enableMockData) {
+    const courses = this.courses.filter(c => c.id <= maxId);
+    return of(courses);
+  }
+
+  return this.apiService.get<ApiResponse<Course[]>>(`/courses?maxId=${maxId}`).pipe(
+    map(response => {
+      if (response.success && response.data) {
+        return response.data;
+      }
+      return [];
+    }),
+    catchError(() => {
+      const courses = this.courses.filter(c => c.id <= maxId);
+      return of(courses);
+    })
+  );
+}
 
   getCourseById(id: number): Observable<Course | undefined> {
     if (environment.features.enableMockData) {
@@ -283,15 +278,19 @@ export class CourseService {
     );
   }
 
-  getCoursesByCategory(category: string): Observable<Course[]> {
-    const filteredCourses = this.courses.filter(c => c.category === category);
-    return of(filteredCourses);
-  }
+getCoursesByCategory(category: string): Observable<Course[]> {
+  const filteredCourses = this.courses.filter(c =>
+    c.details?.some(d => d.category === category)
+  );
+  return of(filteredCourses);
+}
 
-  getCoursesByLevel(level: string): Observable<Course[]> {
-    const filteredCourses = this.courses.filter(c => c.level === level);
-    return of(filteredCourses);
-  }
+getCoursesByLevel(level: string): Observable<Course[]> {
+  const filteredCourses = this.courses.filter(c =>
+    c.details?.some(d => d.level === level)
+  );
+  return of(filteredCourses);
+}
 
   searchCourses(filters: SearchFilters): Observable<Course[]> {
     if (environment.features.enableMockData) {
@@ -309,55 +308,48 @@ export class CourseService {
     );
   }
 
-  private mockSearchCourses(filters: SearchFilters): Observable<Course[]> {
-    let filteredCourses = [...this.courses];
+ private mockSearchCourses(filters: SearchFilters): Observable<Course[]> {
+    let filtered = [...this.courses];
 
-    // Query search
     if (filters.query) {
-      const query = filters.query.toLowerCase();
-      filteredCourses = filteredCourses.filter(course => 
-        course.title.toLowerCase().includes(query) ||
-        course.description.toLowerCase().includes(query) ||
-        course.tags?.some(tag => tag.toLowerCase().includes(query)) ||
-        course.instructor.toLowerCase().includes(query)
+      const q = filters.query.toLowerCase();
+      filtered = filtered.filter(c =>
+        c.title.toLowerCase().includes(q) ||
+        c.description.toLowerCase().includes(q) ||
+        c.details?.some(d => d.tags?.some(tag => tag.toLowerCase().includes(q))) ||
+        c.instructor.toLowerCase().includes(q)
       );
     }
 
-    // Category filter
     if (filters.category && filters.category !== 'all') {
-      filteredCourses = filteredCourses.filter(course => course.category === filters.category);
+      filtered = filtered.filter(c => c.details?.some(d => d.category === filters.category));
     }
 
-    // Level filter
     if (filters.level && filters.level !== 'all') {
-      filteredCourses = filteredCourses.filter(course => course.level === filters.level);
+      filtered = filtered.filter(c => c.details?.some(d => d.level === filters.level));
     }
 
-    // Price range filter
-    if (filters.priceRange) {
-      filteredCourses = filteredCourses.filter(course => 
-        course.price >= filters.priceRange!.min && course.price <= filters.priceRange!.max
-      );
-    }
+if (filters.priceRange) {
+  const { min, max } = filters.priceRange;
+  filtered = filtered.filter(c =>
+    (min === undefined || c.price >= min) &&
+    (max === undefined || c.price <= max)
+  );
+}
 
-    // Rating filter
     if (filters.rating) {
-      filteredCourses = filteredCourses.filter(course => course.rating >= filters.rating!);
+      filtered = filtered.filter(c => c.details?.some(d => d.rating! >= filters.rating!));
     }
 
-    // Language filter
     if (filters.language && filters.language !== 'all') {
-      filteredCourses = filteredCourses.filter(course => course.language === filters.language);
+      filtered = filtered.filter(c => c.details?.some(d => d.language === filters.language));
     }
 
-    // Instructor filter
-    if (filters.instructor) {
-      filteredCourses = filteredCourses.filter(course => 
-        course.instructor.toLowerCase().includes(filters.instructor!.toLowerCase())
-      );
-    }
-
-    return of(filteredCourses);
+if (filters.instructor) {
+  const q = filters.instructor.trim().toLowerCase();
+  filtered = filtered.filter(c => c.instructor.toLowerCase().includes(q));
+}
+    return of(filtered);
   }
 
   getFeaturedCourses(): Observable<Course[]> {
@@ -365,30 +357,53 @@ export class CourseService {
     return of(featuredCourses);
   }
 
-  getCategories(): Observable<string[]> {
-    const categories = [...new Set(this.courses.map(course => course.category))];
-    return of(categories);
-  }
+getCategories(): Observable<string[]> {
+  const categories = [
+    ...new Set(
+      this.courses.flatMap(c =>
+        (c.details ?? [])
+          .map(d => d.category)
+          .filter((cat): cat is string => cat !== undefined)
+      )
+    )
+  ];
+  return of(categories);
+}
 
-  getLevels(): Observable<string[]> {
-    const levels = [...new Set(this.courses.map(course => course.level))];
-    return of(levels);
-  }
+getLevels(): Observable<string[]> {
+  const levels = [
+    ...new Set(
+      this.courses.flatMap(c =>
+        (c.details ?? [])
+          .map(d => d.level)
+          .filter((l): l is string => l !== undefined)
+      )
+    )
+  ];
+  return of(levels);
+}
 
-  getLanguages(): Observable<string[]> {
-    const languages = [...new Set(this.courses.map(course => course.language || 'Монгол'))];
-    return of(languages);
-  }
+getLanguages(): Observable<string[]> {
+  const langs = [
+    ...new Set(
+      this.courses.flatMap(c =>
+        (c.details ?? []).map(d => d.language || 'Монгол')
+      )
+    )
+  ];
+  return of(langs);
+}
 
-  getInstructors(): Observable<string[]> {
-    const instructors = [...new Set(this.courses.map(course => course.instructor))];
+
+ getInstructors(): Observable<string[]> {
+    const instructors = [...new Set(this.courses.map(c => c.instructor))];
     return of(instructors);
   }
 
   getPriceRange(): Observable<{ min: number; max: number }> {
-    const prices = this.courses.map(course => course.price);
-    const min = Math.min(...prices);
-    const max = Math.max(...prices);
-    return of({ min, max });
+    const prices = this.courses.map(c => c.price);
+    return of({ min: Math.min(...prices), max: Math.max(...prices) });
   }
 }
+
+

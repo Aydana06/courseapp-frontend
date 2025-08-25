@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
-import { CourseService, Course } from '../../services/course.service';
+import { CourseService } from '../../services/course.service';
+import {Course } from '../../models/models';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
 

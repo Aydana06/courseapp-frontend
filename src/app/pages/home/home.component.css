@@ -79,26 +79,6 @@
   background: #667eea;
   color: white;
 }
-/* a {
-  position: relative;
-  text-decoration: none;
-  color: #333;
-}
-
-a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 0;
-  height: 2px;
-  background-color: currentColor;
-  transition: width 0.1s ease;
-}
-
-a:hover::after {
-  width: 80%;
-} */
 
 /* Container */
 .container {
@@ -300,4 +280,61 @@ a:hover::after {
   .testimonials-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.add-comment-btn {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.add-comment-btn button {
+  padding: 10px 20px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.add-comment-btn button:hover {
+  background: #5563c1;
+}
+
+.comment-form {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.comment-form input,
+.comment-form textarea,
+.comment-form select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.comment-form button {
+  align-self: flex-start;
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.delete-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 10px;
+}
+.delete-btn:hover {
+  opacity: 0.8;
 }

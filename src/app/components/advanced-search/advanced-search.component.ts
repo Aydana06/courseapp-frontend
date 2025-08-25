@@ -1,7 +1,8 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CourseService, SearchFilters } from '../../services/course.service';
+import { CourseService } from '../../services/course.service';
+import {SearchFilters} from '../../models/models';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 

@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { CourseService, Course } from '../../services/course.service';
+import {  Course } from '../../models/models';
 import { CartService } from '../../services/cart.service';
+import {CourseService  } from '../../services/course.service';
+
 import { AdvancedSearchComponent } from '../../components/advanced-search/advanced-search.component';
 import { AuthService } from '../../services/auth.service';
 
@@ -27,7 +29,7 @@ export class CoursesComponent implements OnInit {
   constructor(
     private courseService: CourseService,
     private cartService: CartService,
-      public authService: AuthService
+    public authService: AuthService
   ) {}
 
   addToCart(course: Course) {
@@ -73,17 +75,23 @@ export class CoursesComponent implements OnInit {
     this.selectedLevel = target.value;
     this.filterCourses();
   }
+filterCourses() {
+  this.filteredCourses = this.courses.filter(course => {
+    const matchesSearch =
+      course.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+      course.description.toLowerCase().includes(this.searchQuery.toLowerCase());
 
-  filterCourses() {
-    this.filteredCourses = this.courses.filter(course => {
-      const matchesSearch = course.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                           course.description.toLowerCase().includes(this.searchQuery.toLowerCase());
-      const matchesCategory = this.selectedCategory === 'all' || course.category === this.selectedCategory;
-      const matchesLevel = this.selectedLevel === 'all' || course.level === this.selectedLevel;
-      
-      return matchesSearch && matchesCategory && matchesLevel;
-    });
-  }
+    const matchesCategory =
+      this.selectedCategory === 'all' ||
+      course.details?.some(d => d.category === this.selectedCategory);
+
+    const matchesLevel =
+      this.selectedLevel === 'all' ||
+      course.details?.some(d => d.level === this.selectedLevel);
+
+    return matchesSearch && matchesCategory && matchesLevel;
+  });
+}
 
   toggleAdvancedSearch() {
     this.showAdvancedSearch = !this.showAdvancedSearch;

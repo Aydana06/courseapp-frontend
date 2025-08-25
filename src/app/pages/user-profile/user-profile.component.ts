@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { AuthService, User } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
+import {User } from '../../models/models';
 
 @Component({
   selector: 'app-user-profile',
@@ -45,11 +46,11 @@ export class UserProfileComponent implements OnInit {
         lastName: this.user.lastName || '',
         email: this.user.email || '',
         phone: this.user.phone || '',
-        bio: '',
+        bio: this.user.bio || '', 
         preferences: {
-          language: 'Монгол',
-          notifications: true,
-          newsletter: false
+        language: this.user.preferences?.language || 'Монгол',
+        notifications: this.user.preferences?.notifications ?? true,
+        newsletter: this.user.preferences?.newsletter ?? false
         }
       };
     }
@@ -66,12 +67,17 @@ export class UserProfileComponent implements OnInit {
         lastName: this.profileData.lastName,
         phone: this.profileData.phone,
         email: this.profileData.email,
-        name: `${this.profileData.firstName} ${this.profileData.lastName}`
+        name: `${this.profileData.firstName} ${this.profileData.lastName}`,
+        bio: this.profileData.bio,   
+      preferences: {               
+        ...this.profileData.preferences
+      }
       };
 
       this.authService.updateProfile(updatedUser).subscribe({
         next: (user) => {
           this.user = user;
+          this.loadProfileData();
           alert('Профайл амжилттай шинэчлэгдлээ!');
           this.isEditing = false;
         },

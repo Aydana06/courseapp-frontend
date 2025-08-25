@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthService, User } from '../../services/auth.service';
-import { CourseService, Course } from '../../services/course.service';
-import { ProgressService, CourseProgress } from '../../services/progress.service';
-import { CertificateService, Certificate } from '../../services/certificate.service';
+import { AuthService } from '../../services/auth.service';
+import { CourseService } from '../../services/course.service';
+import { ProgressService } from '../../services/progress.service';
+import { CertificateService } from '../../services/certificate.service';
+import {User, Course, CourseProgress, Certificate} from '../../models/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -105,7 +106,8 @@ export class DashboardComponent implements OnInit {
     window.location.href = `/course/${courseId}`;
   }
 
-  onImageError(event: any) {
-  event.target.src = 'images/course-placeholder.png';
+
+  onImageError(event: Event) {
+  (event.target as HTMLImageElement).src = 'assets/images/course-placeholder.png';
 }
-} 
+}
