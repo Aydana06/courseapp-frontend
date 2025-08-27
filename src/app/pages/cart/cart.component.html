@@ -13,11 +13,12 @@
         <h3>{{ item.title }}</h3>
         <p>{{ item.price | number }}₮</p>
       </div>
-      <button (click)="remove(item.id)" class="btn btn-outline btn-sm">
+      <button (click)="remove(item._id)" class="btn btn-outline btn-sm">
         Устгах
       </button>
     </li>
   </ul>
+
   <button
     *ngIf="items.length > 0"
     type="button"

@@ -1,6 +1,6 @@
 export interface User {
   phone: string;
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -14,14 +14,14 @@ export interface User {
   avatar?: string;
   createdAt?: string;
   lastLoginAt?: string;
-  enrolledCourses: number[];
+  enrolledCourses: string[];
   progress: CourseProgress[];
   certificates: Certificate[];
-role: 'student';
+  role: 'student' | 'admin'; 
 }
 
 export interface Comment {
-  id?: number;
+  id?: string;
   name: string;
   role: string;
   content: string;
@@ -41,16 +41,19 @@ export interface RegisterRequest {
   password: string;
   phone: string;
   confirmPassword?: string;
+  role: "student" | "admin" | "instructor";
 }
 
 export interface AuthResponse {
   user: User;
   token: string;
-  refreshToken: string;
-} export interface Certificate {
+  refreshToken?: string;
+} 
+
+export interface Certificate {
   id: string;
-  userId?: number;
-  courseId?: number;
+  userId?: string;
+  courseId?: string;
   courseName?: string;
   userName?: string;
   issueDate?: Date;
@@ -68,7 +71,9 @@ export interface CertificateTemplate {
   signatureImage?: string;
 } 
 export interface Course {
-  id: number;
+  level: any;
+  category: any;
+  _id: string;
   title: string;
   price: number;
   image: string;
@@ -78,6 +83,7 @@ export interface Course {
   details?: CourseDetails[];
 }
 export interface CourseDetails {
+  id: string;
   level?: string;
   category?: string;
   rating?: number;
@@ -104,11 +110,12 @@ export interface SearchFilters {
   rating?: number;
   language?: string;
   instructor?: string;
-} export interface CourseProgress {
-  courseId: number;
-  userId: number;
+} 
+export interface CourseProgress {
+  courseId: string;
+  userId: string;
   progress: number;
-  completedLessons: number[];
+  completedLessons: string[];
   totalLessons: number;
   lastAccessed: Date;
   startDate: Date;
@@ -116,9 +123,9 @@ export interface SearchFilters {
 }
 
 export interface LessonProgress {
-  lessonId: number;
-  courseId: number;
-  userId: number;
+  lessonId: string;
+  courseId: string;
+  userId: string;
   completed: boolean;
   completedAt?: Date;
   timeSpent: number; 

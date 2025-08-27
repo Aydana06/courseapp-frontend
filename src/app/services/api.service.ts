@@ -33,6 +33,9 @@ export class ApiService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
+getAuthToken(): string | null {
+  return localStorage.getItem('auth_token');
+}
   private getAuthHeaders(): HttpHeaders {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'

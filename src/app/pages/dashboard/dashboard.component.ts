@@ -4,8 +4,9 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CourseService } from '../../services/course.service';
 import { ProgressService } from '../../services/progress.service';
-import { CertificateService } from '../../services/certificate.service';
-import {User, Course, CourseProgress, Certificate} from '../../models/models';
+import {User, Course, CourseProgress} from '../../models/models';
+import {Router} from "@angular/router";
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,13 +22,12 @@ export class DashboardComponent implements OnInit {
   userProgress: CourseProgress[] = [];
   overallStats = { totalCourses: 0, completedCourses: 0, averageProgress: 0 };
   recentActivity: CourseProgress[] = [];
-  certificates: Certificate[] = [];
 
   constructor(
     private authService: AuthService,
     private courseService: CourseService,
     private progressService: ProgressService,
-    private certificateService: CertificateService
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -35,7 +35,9 @@ export class DashboardComponent implements OnInit {
       if (user) {
         this.user = user;
         this.loadDashboardData();
+        this.loadEnrolledCourses();
       }
+      
     });
   }
 
@@ -58,33 +60,24 @@ export class DashboardComponent implements OnInit {
       this.recentActivity = activity;
     });
 
-    // Load certificates
-    this.certificateService.getUserCertificates(this.user.id).subscribe(certificates => {
-      this.certificates = certificates;
-    });
-
     // Load recommended courses
     this.courseService.getFeaturedCourses().subscribe(courses => {
       this.recommendedCourses = courses;
     });
   }
 
-  loadEnrolledCourses() {
-    this.enrolledCourses = [];
-    
-    this.userProgress.forEach(progress => {
-      this.courseService.getCourseById(progress.courseId).subscribe(course => {
-        if (course) {
-          this.enrolledCourses.push({
-            ...course,
-            progress: progress.progress,
-            lastAccessed: progress.lastAccessed,
-            startDate: progress.startDate
-          });
-        }
-      });
-    });
-  }
+loadEnrolledCourses() {
+  const requests = this.userProgress.map(p => this.courseService.getCourseById(p.courseId));
+  forkJoin(requests).subscribe(courses => {
+    this.enrolledCourses = courses.map((course, i) => ({
+      ...course,
+      progress: this.userProgress[i].progress,
+      lastAccessed: this.userProgress[i].lastAccessed,
+      startDate: this.userProgress[i].startDate
+    }));
+  });
+}
+
 
   get averageProgress(): number {
     if (this.enrolledCourses.length === 0) return 0;
@@ -97,13 +90,14 @@ export class DashboardComponent implements OnInit {
     return '#dc3545';
   }
 
-  formatDate(date: Date): string {
-    return new Date(date).toLocaleDateString('mn-MN');
-  }
+formatDate(date: string | Date): string {
+  return new Date(date).toLocaleDateString('mn-MN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+}
+
 
   continueCourse(courseId: number) {
     // Navigate to course detail
-    window.location.href = `/course/${courseId}`;
+   this.router.navigate(['/course', courseId]);
   }
 
 

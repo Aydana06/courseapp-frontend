@@ -1,15 +1,17 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { ApiService, ApiResponse } from './api.service';
-import { environment } from '../../environments/environment';
-import { AuthResponse, CourseProgress, LoginRequest, RegisterRequest, User } from '../models/models'; 
+import { LoginRequest, RegisterRequest, User } from '../models/models'; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private readonly accessTokenKey = 'auth_token';
+  private readonly userKey = 'user';
+  private API = 'http://localhost:5000/api/auth';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -22,7 +24,7 @@ export class AuthService {
 
   private loadUserFromStorage(): void {
     if (isPlatformBrowser(this.platformId)) {
-      const userData = localStorage.getItem('user');
+      const userData = localStorage.getItem(this.userKey);
       if (userData) {
         const user = JSON.parse(userData);
         this.currentUserSubject.next(user);
@@ -30,127 +32,57 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string): Observable<User> {
-    // Use mock data in development or when API is not available
-    if (environment.features.enableMockData) {
-      return this.mockLogin(email, password);
-    }
-
-    const loginData: LoginRequest = { email, password };
-    
-    return this.apiService.post<ApiResponse<AuthResponse>>('/auth/login', loginData).pipe(
-      map(response => {
-        if (response.success && response.data) {
-          const { user, token } = response.data;
-          this.setAuthToken(token);
-          this.setUser(user);
-          return user;
-        } else {
-          throw new Error(response.message || 'Нэвтрэх үед алдаа гарлаа');
-        }
-      }),
-      catchError(error => {
-        console.error('Login error:', error);
-        return throwError(() => error);
-      })
-    );
+  isLoggedIn(): boolean {
+    return !!this.currentUserSubject.value;
   }
 
-  private mockLogin(email: string, password: string): Observable<User> {
-  return new Observable(observer => {
-    setTimeout(() => {
-      if (email === 'bolataidana73@gmail.com' && password === '123456') {
-        const user: User = {
-          id: 1,
-          firstName: 'Bolat',
-          lastName: 'Aydana',
-          email: email,
-          phone: '90908990',
-          name: 'Bolat Aydana',
-          role: 'student',
-          createdAt: new Date().toISOString(),
-          lastLoginAt: new Date().toISOString(),
-          bio: '',
-          preferences: {
-            language: 'Монгол',
-            notifications: true,
-            newsletter: false
-          },
-          enrolledCourses: [3, 4, 5],
-          progress: [],
-          certificates: [
-            { id: '1', courseName: 'Angular Basics', issueDate: new Date(), grade: 'A' }
-          ]
-        };
-        this.setUser(user);
-        observer.next(user);
-        observer.complete();
-      } else {
-        observer.error(new Error('Нэвтрэх нэр эсвэл нууц үг буруу байна'));
-      }
-    }, 1000);
-  });
-}
+  login(email: string, password: string): Observable<User> {
+    const loginData: LoginRequest = { email, password };
+  
+    return this.apiService.post<ApiResponse<{ user: User; accessToken: string }>>('/auth/login', loginData).pipe(
+      map(response => {
+        if (response.success && response.data) {
+          const { user, accessToken } = response.data;  
+          const mappedUser = { ...user, id: (user as any)._id }; 
+          
+          // 📌 LocalStorage дээр хадгална
+          this.setAuthToken(accessToken);
+          this.setUser(mappedUser);
+
+          return mappedUser;
+        }
+        throw new Error(response.message || 'Нэвтрэх үед алдаа гарлаа');
+      }),
+      catchError(err => throwError(() => err))
+    );
+  }
 
   register(userData: RegisterRequest): Observable<User> {
-    // Use mock data in development or when API is not available
-    if (environment.features.enableMockData) {
-      return this.mockRegister(userData);
-    }
-
-    return this.apiService.post<ApiResponse<AuthResponse>>('/auth/register', userData).pipe(
+    return this.apiService.post<ApiResponse<{ user: User; token: string }>>(
+      '/auth/register',
+      userData
+    ).pipe(
       map(response => {
         if (response.success && response.data) {
           const { user, token } = response.data;
+          const mappedUser = { ...user, id: (user as any)._id };
+
+          // 📌 LocalStorage дээр хадгална
           this.setAuthToken(token);
-          this.setUser(user);
-          return user;
-        } else {
-          throw new Error(response.message || 'Бүртгэл үүсгэх үед алдаа гарлаа');
+          this.setUser(mappedUser);
+
+          return mappedUser;
         }
+        throw new Error(response.message || 'Бүртгэл үүсгэх үед алдаа гарлаа');
       }),
-      catchError(error => {
-        console.error('Register error:', error);
-        return throwError(() => error);
-      })
+      catchError(err => throwError(() => err))
     );
   }
-
- private mockRegister(userData: RegisterRequest): Observable<User> {
-  return new Observable(observer => {
-    setTimeout(() => {
-      const user: User = {
-        id: Date.now(),
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        phone: userData.phone,
-        email: userData.email,
-        name: `${userData.firstName} ${userData.lastName}`,
-        role: 'student',
-        createdAt: new Date().toISOString(),
-        lastLoginAt: new Date().toISOString(),
-        bio: '',
-        preferences: {
-          language: 'Монгол',
-          notifications: true,
-          newsletter: false
-        },
-        enrolledCourses: [],
-        progress: [],
-        certificates: []
-      };
-      this.setUser(user);
-      observer.next(user);
-      observer.complete();
-    }, 1000);
-  });
-}
-
 
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('user');
-      localStorage.removeItem('auth_token');
+      localStorage.removeItem(this.userKey);
+      localStorage.removeItem(this.accessTokenKey);
       localStorage.removeItem('refresh_token');
     }
     this.currentUserSubject.next(null);
@@ -158,22 +90,19 @@ export class AuthService {
 
   private setAuthToken(token: string): void {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('auth_token', token);
+      localStorage.setItem(this.accessTokenKey, token);
     }
   }
 
   private setUser(user: User): void {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem(this.userKey, JSON.stringify(user));
     }
     this.currentUserSubject.next(user);
   }
 
   getAuthToken(): string | null {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem('auth_token');
-    }
-    return null;
+    return isPlatformBrowser(this.platformId) ? localStorage.getItem(this.accessTokenKey) : null;
   }
 
   getCurrentUser(): User | null {
@@ -184,82 +113,51 @@ export class AuthService {
     return this.currentUserSubject.value !== null;
   }
 
-  // Refresh token method
   refreshToken(): Observable<string> {
-    if (environment.features.enableMockData) {
-      return of('mock_refreshed_token');
-    }
-
     return this.apiService.post<ApiResponse<{ token: string }>>('/auth/refresh', {}).pipe(
       map(response => {
         if (response.success && response.data) {
+          // 📌 Refresh дараа шинэ токен хадгална
           this.setAuthToken(response.data.token);
           return response.data.token;
-        } else {
-          throw new Error('Token refresh failed');
         }
+        throw new Error('Token refresh failed');
       }),
-      catchError(error => {
+      catchError(err => {
         this.logout();
-        return throwError(() => error);
+        return throwError(() => err);
       })
     );
   }
 
-  // Update user profile
   updateProfile(userData: Partial<User>): Observable<User> {
-    if (environment.features.enableMockData) {
-      return this.mockUpdateProfile(userData);
-    }
-
     return this.apiService.put<ApiResponse<User>>('/auth/profile', userData).pipe(
       map(response => {
         if (response.success && response.data) {
-          this.setUser(response.data);
-          return response.data;
-        } else {
-          throw new Error(response.message || 'Профайл шинэчлэх үед алдаа гарлаа');
+          const mappedUser = { ...response.data, id: (response.data as any)._id };
+
+          // 📌 LocalStorage дээр хадгална
+          this.setUser(mappedUser);
+
+          return mappedUser;
         }
-      })
+        throw new Error(response.message || 'Профайл шинэчлэх үед алдаа гарлаа');
+      }),
+      catchError(err => throwError(() => err))
     );
   }
 
-
-  private mockUpdateProfile(userData: Partial<User>): Observable<User> {
-    return new Observable(observer => {
-      setTimeout(() => {
-        const currentUser = this.getCurrentUser();
-        if (currentUser) {
-          const updatedUser = { ...currentUser, ...userData };
-          this.setUser(updatedUser);
-          observer.next(updatedUser);
-          observer.complete();
-        } else {
-          observer.error(new Error('Хэрэглэгч нэвтээгүй байна'));
-        }
-      }, 500);
-    });
-  }
-
-  // Verify email
   verifyEmail(token: string): Observable<boolean> {
-    if (environment.features.enableMockData) {
-      return of(true);
-    }
-
     return this.apiService.post<ApiResponse<boolean>>('/auth/verify-email', { token }).pipe(
-      map(response => response.success && !!response.data)
+      map(response => response.success && !!response.data),
+      catchError(err => throwError(() => err))
     );
   }
 
-  // Reset password
   resetPassword(email: string): Observable<boolean> {
-    if (environment.features.enableMockData) {
-      return of(true);
-    }
-
     return this.apiService.post<ApiResponse<boolean>>('/auth/reset-password', { email }).pipe(
-      map(response => response.success && !!response.data)
+      map(response => response.success && !!response.data),
+      catchError(err => throwError(() => err))
     );
   }
-} 
+}

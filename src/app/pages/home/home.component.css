@@ -281,7 +281,7 @@
     grid-template-columns: 1fr;
   }
 }
-
+/* 
 .add-comment-btn {
   text-align: center;
   margin: 30px 0;
@@ -337,4 +337,4 @@
 }
 .delete-btn:hover {
   opacity: 0.8;
-}
+} */

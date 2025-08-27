@@ -85,6 +85,40 @@
         />
       </div>
 
+      <div class="form-group">
+        <label>Хэрэглэгчийн төрөл</label>
+        <div class="role-options">
+          <label>
+            <input
+              type="radio"
+              [(ngModel)]="registerData.role"
+              name="role"
+              value="student"
+              checked
+            />
+            Student
+          </label>
+          <label>
+            <input
+              type="radio"
+              [(ngModel)]="registerData.role"
+              name="role"
+              value="admin"
+            />
+            Admin
+          </label>
+          <label>
+            <input
+              type="radio"
+              [(ngModel)]="registerData.role"
+              name="role"
+              value="instructor"
+            />
+            Instructor
+          </label>
+        </div>
+      </div>
+
       <div class="form-options">
         <label class="checkbox-label">
           <input type="checkbox" name="terms" required />

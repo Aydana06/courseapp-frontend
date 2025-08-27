@@ -53,7 +53,7 @@
 
           <!-- Нэвтэрсэн үед -->
           <button
-            *ngIf="authService.isAuthenticated()"
+            *ngIf="authService.isLoggedIn()"
             class="btn btn-outline"
             (click)="addToCart(course)"
           >
@@ -61,10 +61,7 @@
           </button>
 
           <!-- Нэвтрээгүй үед -->
-          <div
-            *ngIf="!authService.isAuthenticated()"
-            class="auth-required-card"
-          >
+          <div *ngIf="!authService.isLoggedIn()" class="auth-required-card">
             <h3>Нэвтрэх шаардлагатай</h3>
             <p>
               Сургалт авахын тулд та сайтад
@@ -108,7 +105,6 @@
             </li>
           </ul>
         </div>
-
         <!-- Outcomes -->
         <div class="content-section">
           <h2>Сургах зүйлс</h2>
@@ -119,6 +115,7 @@
           </ul>
         </div>
       </div>
+      <app-comment></app-comment>
     </div>
   </div>
 </div>

@@ -18,7 +18,8 @@ export class RegisterComponent {
     email: '',
     password: '',
     confirmPassword: '',
-    phone: ''
+    phone: '',
+    role: 'student'
   };
   
   isLoading = false;
@@ -35,54 +36,58 @@ export class RegisterComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // Validate required fields
-    if (!this.registerData.firstName || !this.registerData.lastName || !this.registerData.email || !this.registerData.password || !this.registerData.phone) {
-      this.errorMessage = 'Бүх талбарыг бөглөнө үү';
-      this.isLoading = false;
-      return;
-    }
+    const { firstName, lastName, email, password, confirmPassword, phone, role} = this.registerData;
+      // Validate required fields
+      if (!firstName || !lastName || !email || !password || !phone || !role) {
+        this.errorMessage = 'Бүх талбарыг бөглөнө үү';
+        this.isLoading = false;
+        return;
+      }
 
     // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.registerData.email)) {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+    if (!emailRegex.test(email)) {
       this.errorMessage = 'Имэйлийн хаяг буруу байна';
       this.isLoading = false;
       return;
     }
     //Validate phone number format
-    const phoneRegex = /^(?:\+976)?\d{8}$/;
-    if (!phoneRegex.test(this.registerData.phone)) {
+    const phoneRegex = /^(\+976)?[0-9]{8}$/;
+    if (!phoneRegex.test(phone)) {
       this.errorMessage = 'Утасны дугаар буруу байна';
       this.isLoading = false;
       return;
     }
 
     // Validate passwords match
-    if (this.registerData.password !== this.registerData.confirmPassword) {
+    if (password !== confirmPassword) {
       this.errorMessage = 'Нууц үгнүүд таарахгүй байна';
       this.isLoading = false;
       return;
     }
-
-    // Validate password strength
-    if (this.registerData.password.length < 6) {
-      this.errorMessage = 'Нууц үг хамгийн багадаа 6 тэмдэгт байх ёстой';
+      // Validate password strength
+    const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
+    if (!strongPasswordRegex.test(password)) {
+      this.errorMessage = 'Нууц үг дор хаяж 1 том үсэг, 1 тоо агуулсан байх ёстой';
       this.isLoading = false;
       return;
     }
 
-      this.authService.register(this.registerData)
-    .subscribe({
+  this.authService.register({ firstName,
+    lastName,
+    email,
+    password,
+    phone,
+    role: 'student'}).subscribe({
       next: (user) => {
         console.log('Registration successful:', user);
+        console.log(this.registerData)
         this.successMessage = 'Бүртгэл амжилттай үүслээ!';
-        setTimeout(() => {
-          this.router.navigate(['/dashboard']);
-        }, 1500);
+        this.router.navigate(['/dashboard']);
       },
       error: (error) => {
         console.error('Registration error:', error);
-        this.errorMessage = error.message || 'Бүртгэл үүсгэхэд алдаа гарлаа';
+        this.errorMessage = error?.error?.message || 'Бүртгэл үүсгэхэд алдаа гарлаа';
         this.isLoading = false;
       },
       complete: () => {

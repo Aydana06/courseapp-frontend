@@ -1,23 +1,36 @@
-// import { Injectable } from '@angular/core';
-// import { Observable } from 'rxjs';
-// import { ApiService, ApiResponse } from './api.service';
-// import { User } from '../models/models';
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { ApiService, ApiResponse } from './api.service';
+import { User } from '../models/models';
 
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class UserService {
-//   constructor(private apiService: ApiService) {}
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+  constructor(private apiService: ApiService) {}
 
-//   getUsers(): Observable<User[]> {
-//     return this.apiService.get<ApiResponse<User[]>>('/users');
-//   }
+  // Бүх хэрэглэгч
+  getUsers(): Observable<User[]> {
+    return this.apiService.get<ApiResponse<User[]>>('/users').pipe(
+      map(res => res.success && res.data ? res.data : []),
+      catchError(() => of([]))
+    );
+  }
 
-//   getUserById(id: number): Observable<User> {
-//     return this.apiService.get<ApiResponse<User>>(`/users/${id}`);
-//   }
+  // Нэг хэрэглэгч
+  getUserById(id: string): Observable<User | undefined> {
+    return this.apiService.get<ApiResponse<User>>(`/users/${id}`).pipe(
+      map(res => res.success && res.data ? res.data : undefined),
+      catchError(() => of(undefined))
+    );
+  }
 
-//   updateUser(id: number, userData: Partial<User>): Observable<User> {
-//     return this.apiService.put<ApiResponse<User>>(`/users/${id}`, userData);
-//   }
-// }
+  // Хэрэглэгч засварлах
+  updateUser(id: string, userData: Partial<User>): Observable<User | undefined> {
+    return this.apiService.put<ApiResponse<User>>(`/users/${id}`, userData).pipe(
+      map(res => res.success && res.data ? res.data : undefined),
+      catchError(() => of(undefined))
+    );
+  }
+}

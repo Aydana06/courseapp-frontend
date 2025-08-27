@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { ApiService, ApiResponse } from './api.service';
 import { Comment } from '../models/models';
 
@@ -12,38 +12,35 @@ export class CommentService {
 
   constructor(private apiService: ApiService) {}
 
-  // бүх коммент авах
+  // Бүх коммент авах
   getComments(): Observable<Comment[]> {
     return this.apiService.get<ApiResponse<Comment[]>>(this.baseUrl).pipe(
-      map(res => res.data || [])
+      map(res => res.success && res.data ? res.data : []),
+      catchError(() => of([]))
     );
   }
 
-  // нэг коммент авах
-  getComment(id: number): Observable<Comment | undefined> {
+  // Нэг коммент авах
+  getComment(id: string): Observable<Comment | undefined> {
     return this.apiService.get<ApiResponse<Comment>>(`${this.baseUrl}/${id}`).pipe(
-      map(res => res.data)
+      map(res => res.success && res.data ? res.data : undefined),
+      catchError(() => of(undefined))
     );
   }
 
-  // коммент нэмэх
-  addComment(comment: Comment): Observable<Comment | undefined> {
+  // Коммент нэмэх
+  addComment(comment: Partial<Comment>): Observable<Comment | undefined> {
     return this.apiService.post<ApiResponse<Comment>>(this.baseUrl, comment).pipe(
-      map(res => res.data)
+      map(res => res.success && res.data ? res.data : undefined),
+      catchError(() => of(undefined))
     );
   }
 
-  // коммент засах
-  updateComment(id: number, comment: Partial<Comment>): Observable<Comment | undefined> {
-    return this.apiService.put<ApiResponse<Comment>>(`${this.baseUrl}/${id}`, comment).pipe(
-      map(res => res.data)
-    );
-  }
-
-  // коммент устгах
-  deleteComment(id: number): Observable<Comment | undefined> {
-    return this.apiService.delete<ApiResponse<Comment>>(`${this.baseUrl}/${id}`).pipe(
-      map(res => res.data)
+  // Коммент устгах
+  deleteComment(id: string): Observable<boolean> {
+    return this.apiService.delete<ApiResponse<null>>(`${this.baseUrl}/${id}`).pipe(
+      map(res => res.success),
+      catchError(() => of(false))
     );
   }
 }

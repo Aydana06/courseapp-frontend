@@ -5,20 +5,20 @@ import { CartService } from '../../services/cart.service';
 import { Course, Comment } from '../../models/models';
 import { AuthService } from '../../services/auth.service';
 import { CourseService } from '../../services/course.service';
-import { CommentService } from '../../services/comment.service';
-import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { CommentComponent } from '../../components/comments/comments.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, CommentComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
   courses$!: Observable<Course[]>;
-  comments$!: Observable<Comment[]>;
+  // comments$!: Observable<Comment[]>;
   featuredCourses$!: Observable<Course[]>;
 
   showForm = false;
@@ -28,44 +28,26 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private cartService: CartService,
+    private router: Router,
     public authService: AuthService,
     private courseService: CourseService,
-    private commentService: CommentService
   ) {}
 
   ngOnInit() {
-    this.loadCourses(3);
-    this.loadComments();
+    this.loadCourses();
   }
 
   toggleForm(): void {
     this.showForm = !this.showForm;
   }
 
-  loadCourses(id: number) {
-    this.courses$ = this.courseService.getCoursesUpToId(id);
-    this.featuredCourses$ = this.courses$; // одоохондоо адилхан
+  goToCourse(id: string) {
+    this.router.navigate(['/courses', id]);
   }
 
-  addComment(): void {
-    if (!this.newComment.name || !this.newComment.content) return;
-
-    this.commentService.addComment(this.newComment).subscribe(() => {
-      this.newComment = { name: '', role: '', content: '', rating: 5 };
-      this.showForm = false;
-      this.loadComments(); // refresh
-    });
-  }
-
-  loadComments(): void {
-    this.comments$ = this.commentService.getComments();
-  }
-
-  deleteComment(id: number): void {
-    this.commentService.deleteComment(id).subscribe({
-      next: () => this.loadComments(), // refresh
-      error: (err) => console.error('Алдаа гарлаа:', err)
-    });
+  loadCourses() {
+    this.courses$ = this.courseService.getFeaturedCourses();
+    this.featuredCourses$ = this.courses$; 
   }
 
   addToCart(course: Course) {

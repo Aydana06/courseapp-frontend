@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4000',
+  apiUrl: 'http://localhost:5000/api',
   appName: 'Төлбөртэй Сургалтын Вэбсайт',
   version: '1.0.0',
   features: {

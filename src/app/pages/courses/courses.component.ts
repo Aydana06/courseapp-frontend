@@ -6,13 +6,13 @@ import {  Course } from '../../models/models';
 import { CartService } from '../../services/cart.service';
 import {CourseService  } from '../../services/course.service';
 
-import { AdvancedSearchComponent } from '../../components/advanced-search/advanced-search.component';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-courses',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, AdvancedSearchComponent],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.component.css']
 })
@@ -24,12 +24,12 @@ export class CoursesComponent implements OnInit {
   searchQuery = '';
   selectedCategory = 'all';
   selectedLevel = 'all';
-  showAdvancedSearch = false;
 
   constructor(
     private courseService: CourseService,
     private cartService: CartService,
-    public authService: AuthService
+    public authService: AuthService,
+      private router: Router
   ) {}
 
   addToCart(course: Course) {
@@ -48,15 +48,32 @@ export class CoursesComponent implements OnInit {
     });
   }
 
-  loadFilterOptions() {
-    this.courseService.getCategories().subscribe(categories => {
-      this.categories = categories;
-    });
-
-    this.courseService.getLevels().subscribe(levels => {
-      this.levels = levels;
-    });
+  goToCourse(id: string) {
+    this.router.navigate(['/courses', id]);
   }
+
+loadFilterOptions() {
+  this.courseService.getAllCourses().subscribe(courses => {
+    this.courses = courses;
+
+    this.categories = [
+      ...new Set(
+        courses
+          .map(c => c.details?.[0]?.category)
+          .filter((cat): cat is string => !!cat)
+      )
+    ];
+    this.levels = [
+      ...new Set(
+        courses
+          .map(c => c.details?.[0]?.level)
+          .filter((lvl): lvl is string => !!lvl)
+      )
+    ];
+  });
+}
+
+
 
   onSearchChange(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -92,12 +109,4 @@ filterCourses() {
     return matchesSearch && matchesCategory && matchesLevel;
   });
 }
-
-  toggleAdvancedSearch() {
-    this.showAdvancedSearch = !this.showAdvancedSearch;
-  }
-
-  onAdvancedSearchResults(results: Course[]) {
-    this.filteredCourses = results;
-  }
 } 

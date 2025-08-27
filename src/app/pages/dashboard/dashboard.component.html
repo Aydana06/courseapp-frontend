@@ -4,7 +4,7 @@
     <div class="dashboard-header">
       <h1>Хяналтын самбар</h1>
       <p>
-        Сайн байна уу, <b>{{ user?.name }}! </b>Таны сургалтын явц
+        Сайн байна уу <b>{{ user?.name }}! </b>Таны сургалтын явц
       </p>
     </div>
 
@@ -96,29 +96,6 @@
           </div>
         </ng-template>
       </div>
-      <!-- Certificates -->
-      <div class="section certificates" *ngIf="certificates.length > 0">
-        <div class="section-header">
-          <h2>Миний гэрчилгээнүүд</h2>
-        </div>
-
-        <div class="certificates-grid">
-          <div
-            *ngFor="let certificate of certificates"
-            class="certificate-card"
-          >
-            <div class="certificate-icon">🏆</div>
-            <div class="certificate-info">
-              <h4>{{ certificate.courseName }}</h4>
-              <p>{{ certificate.issueDate | date : "yyyy-MM-dd" }}</p>
-
-              <span class="grade" *ngIf="certificate.grade">{{
-                certificate.grade
-              }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Recommended Courses -->
       <div class="section recommended-courses">
@@ -145,7 +122,7 @@
               <p class="instructor">{{ course.instructor }}</p>
               <div class="price">{{ course.price | number }}₮</div>
               <a
-                [routerLink]="['/course', course.id]"
+                [routerLink]="['/course', course._id]"
                 class="btn btn-primary btn-sm"
                 >Дэлгэрэнгүй</a
               >

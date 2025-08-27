@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../services/cart.service';
-import {  Course } from '../../models/models';
-
+import { Course } from '../../models/models';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -12,14 +11,28 @@ import { RouterModule } from '@angular/router';
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css']
 })
-export class CheckoutComponent {
+export class CheckoutComponent implements OnInit {
   items: Course[] = [];
   total = 0;
 
   constructor(private cartService: CartService) {}
 
   ngOnInit() {
-    this.items = this.cartService.getItems();
-    this.total = this.items.reduce((sum, item) => sum + item.price, 0);
+    // эхлээд серверээс сагсыг ачаална
+    this.cartService.loadCart();
+
+    // cart$-д subscribe хийгээд мэдээллийг авна
+    this.cartService.cart$.subscribe(courses => {
+      this.items = courses;
+      this.total = this.items.reduce((sum, item) => sum + (item.price || 0), 0);
+    });
+  }
+
+  removeFromCart(courseId: string) {
+    this.cartService.removeFromCart(courseId);
+  }
+
+  enroll(courseId: string) {
+    this.cartService.enroll(courseId);
   }
 }

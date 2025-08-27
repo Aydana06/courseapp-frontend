@@ -23,13 +23,15 @@ export class CartComponent implements OnInit {
     });
   }
 
-  remove(id: number) {
+  remove(id: string) {
     this.cartService.removeFromCart(id);
   }
 
-  buyCourse(){
-      this.router.navigate(['/checkout']);
-  }
+ buyCourse() {
+  this.cartService.checkout();
+  this.router.navigate(['/checkout']);
+}
+
 
   routeCourse(){
     this.router.navigate(['/courses']);
