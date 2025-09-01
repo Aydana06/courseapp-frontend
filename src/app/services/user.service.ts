@@ -18,19 +18,19 @@ export class UserService {
     );
   }
 
-  // Нэг хэрэглэгч
-  getUserById(id: string): Observable<User | undefined> {
+  // Нэг хэрэглэгч (ID-аар)
+  getUserById(id: string): Observable<User | null> {
     return this.apiService.get<ApiResponse<User>>(`/users/${id}`).pipe(
-      map(res => res.success && res.data ? res.data : undefined),
-      catchError(() => of(undefined))
+      map(res => res.success && res.data ? res.data : null),
+      catchError(() => of(null))
     );
   }
 
   // Хэрэглэгч засварлах
-  updateUser(id: string, userData: Partial<User>): Observable<User | undefined> {
+  updateUser(id: string, userData: Partial<User>): Observable<User | null> {
     return this.apiService.put<ApiResponse<User>>(`/users/${id}`, userData).pipe(
-      map(res => res.success && res.data ? res.data : undefined),
-      catchError(() => of(undefined))
+      map(res => res.success && res.data ? res.data : null),
+      catchError(() => of(null))
     );
   }
 }

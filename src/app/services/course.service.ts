@@ -27,12 +27,12 @@ export class CourseService {
   }
 
   // ID-аар курс авах
-getCourseById(id: string): Observable<Course | undefined> {
-  return this.apiService.get<ApiResponse<Course>>(`/courses/${id}`).pipe(
-    map(res => (res.success ? res.data : undefined)),
-    catchError(() => of(undefined))
-  );
-}
+  getCourseById(id: string): Observable<Course | null> {
+    return this.apiService.get<ApiResponse<Course>>(`/courses/${id}`).pipe(
+      map(res => (res.success && res.data ? res.data : null)),  // зөвхөн data-г буцаана
+      catchError(() => of(null))
+    );
+  }
 
   // Featured Courses
   getFeaturedCourses(): Observable<Course[]> {
@@ -41,5 +41,14 @@ getCourseById(id: string): Observable<Course | undefined> {
       catchError(() => of([]))
     );
   }
+
+  getRecommendations(enrolledCourses: string[]): Observable<Course[]> {
+  return this.getAllCourses().pipe(
+    map(courses =>
+      courses.filter(course => !enrolledCourses.includes(course._id))
+    ),
+    catchError(() => of([]))
+  );
+}
 
 }

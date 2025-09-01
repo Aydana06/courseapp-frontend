@@ -24,23 +24,27 @@ export interface PaginatedResponse<T> {
   providedIn: 'root'
 })
 export class ApiService {
-  private readonly baseUrl = environment.apiUrl;
-  private loadingSubject = new BehaviorSubject<boolean>(false);
-  public loading$ = this.loadingSubject.asObservable();
+  private readonly baseUrl = environment.apiUrl; // API үндсэн URL
+  private loadingSubject = new BehaviorSubject<boolean>(false); // Loading төлөв хадгалах
+  public loading$ = this.loadingSubject.asObservable(); // Component-үүдэд ажиглагдах loading stream
 
   constructor(
     private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object // SSR эсвэл browser дээр ажиллаж байгааг шалгах
   ) {}
 
-getAuthToken(): string | null {
-  return localStorage.getItem('auth_token');
-}
+  // LocalStorage-с JWT token авах
+  getAuthToken(): string | null {
+    return localStorage.getItem('auth_token');
+  }
+
+  // Header үүсгэх (Authorization Bearer token + Content-Type)
   private getAuthHeaders(): HttpHeaders {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
 
+    // зөвхөн browser дээр localStorage ажиллана
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('auth_token');
       if (token) {
@@ -51,48 +55,52 @@ getAuthToken(): string | null {
     return headers;
   }
 
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Алдаа гарлаа. Дахин оролдоно уу.';
-    
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = `Клиентийн алдаа: ${error.error.message}`;
-    } else {
-      // Server-side error
-      switch (error.status) {
-        case 400:
-          errorMessage = error.error?.message || 'Буруу хүсэлт';
-          break;
-        case 401:
-          errorMessage = 'Нэвтрэх шаардлагатай';
-          if (isPlatformBrowser(this.platformId)) {
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('user');
-          }
-          break;
-        case 403:
-          errorMessage = 'Хандах эрхгүй';
-          break;
-        case 404:
-          errorMessage = 'Өгөгдөл олдсонгүй';
-          break;
-        case 500:
-          errorMessage = 'Серверийн алдаа';
-          break;
-        default:
-          errorMessage = error.error?.message || `Алдаа: ${error.status}`;
-      }
-    }
+// Алдаа боловсруулах
+private handleError(error: HttpErrorResponse) {
+  let errorMessage = 'Алдаа гарлаа. Дахин оролдоно уу.';
 
-    console.error('API Error:', error);
-    return throwError(() => new Error(errorMessage));
+  if (error.status === 0) {
+    // Client-side эсвэл network алдаа
+    errorMessage = 'Сүлжээ эсвэл клиент талын алдаа гарлаа.';
+  } else {
+    // Сервер талын алдаа
+    switch (error.status) {
+      case 400:
+        errorMessage = error.error?.message || 'Буруу хүсэлт';
+        break;
+      case 401:
+        errorMessage = 'Нэвтрэх шаардлагатай';
+        if (isPlatformBrowser(this.platformId)) {
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user');
+        }
+        break;
+      case 403:
+        errorMessage = 'Хандах эрхгүй';
+        break;
+      case 404:
+        errorMessage = 'Өгөгдөл олдсонгүй';
+        break;
+      case 500:
+        errorMessage = 'Серверийн алдаа';
+        break;
+      default:
+        errorMessage = error.error?.message || `Алдаа: ${error.status}`;
+    }
   }
 
+  console.error('API Error:', error);
+  return throwError(() => new Error(errorMessage));
+}
+
+  // Loading төлөв шинэчлэх
   private setLoading(loading: boolean) {
     this.loadingSubject.next(loading);
   }
 
-  // Generic HTTP methods
+  // ------------ HTTP METHODS ------------
+  
+  // GET хүсэлт
   get<T>(endpoint: string, params?: any): Observable<T> {
     this.setLoading(true);
     
@@ -109,7 +117,7 @@ getAuthToken(): string | null {
       headers: this.getAuthHeaders(),
       params: httpParams
     }).pipe(
-      retry(1),
+      retry(1), // нэг удаа автоматаар дахин оролдоно
       tap(() => this.setLoading(false)),
       catchError((error) => {
         this.setLoading(false);
@@ -118,6 +126,7 @@ getAuthToken(): string | null {
     );
   }
 
+  // POST хүсэлт
   post<T>(endpoint: string, data: any): Observable<T> {
     this.setLoading(true);
     
@@ -132,6 +141,7 @@ getAuthToken(): string | null {
     );
   }
 
+  // PUT хүсэлт (бүхэлд нь шинэчлэх)
   put<T>(endpoint: string, data: any): Observable<T> {
     this.setLoading(true);
     
@@ -146,6 +156,7 @@ getAuthToken(): string | null {
     );
   }
 
+  // PATCH хүсэлт (зарим хэсгийг шинэчлэх)
   patch<T>(endpoint: string, data: any): Observable<T> {
     this.setLoading(true);
     
@@ -160,6 +171,7 @@ getAuthToken(): string | null {
     );
   }
 
+  // DELETE хүсэлт
   delete<T>(endpoint: string): Observable<T> {
     this.setLoading(true);
     
@@ -173,63 +185,11 @@ getAuthToken(): string | null {
       })
     );
   }
-
-  // File upload method
-  uploadFile<T>(endpoint: string, file: File, additionalData?: any): Observable<T> {
-    this.setLoading(true);
-    
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    if (additionalData) {
-      Object.keys(additionalData).forEach(key => {
-        formData.append(key, additionalData[key]);
-      });
-    }
-
-    let headers = new HttpHeaders();
-    if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        headers = headers.set('Authorization', `Bearer ${token}`);
-      }
-    }
-
-    return this.http.post<T>(`${this.baseUrl}${endpoint}`, formData, {
-      headers: headers
-    }).pipe(
-      tap(() => this.setLoading(false)),
-      catchError((error) => {
-        this.setLoading(false);
-        return this.handleError(error);
-      })
-    );
-  }
-
-  // Download file method
-  downloadFile(endpoint: string, filename: string): Observable<Blob> {
-    return this.http.get(`${this.baseUrl}${endpoint}`, {
-      headers: this.getAuthHeaders(),
-      responseType: 'blob'
-    }).pipe(
-      tap(blob => {
-        if (isPlatformBrowser(this.platformId)) {
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = filename;
-          link.click();
-          window.URL.revokeObjectURL(url);
-        }
-      }),
-      catchError(this.handleError)
-    );
-  }
-
-  // Health check
+  
+  // Health check endpoint шалгах
   healthCheck(): Observable<any> {
     return this.http.get(`${this.baseUrl}/health`).pipe(
       catchError(this.handleError)
     );
   }
-} 
+}

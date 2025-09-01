@@ -28,8 +28,10 @@
           routerLinkActive="active"
           class="nav-link"
           (click)="closeMenu()"
-          >Сагс</a
         >
+          Сагс <span *ngIf="cartCount > 0">({{ cartCount }})</span>
+        </a>
+
         <a
           routerLink="/dashboard"
           routerLinkActive="active"

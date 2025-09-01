@@ -4,7 +4,9 @@
     <div class="dashboard-header">
       <h1>Хяналтын самбар</h1>
       <p>
-        Сайн байна уу <b>{{ user?.name }}! </b>Таны сургалтын явц
+        Сайн байна уу
+        <b>{{ user?.firstName }} {{ user?.lastName }}</b
+        >! Таны сургалтын явц
       </p>
     </div>
 
@@ -78,7 +80,7 @@
 
             <div class="course-actions">
               <button
-                (click)="continueCourse(course.id)"
+                (click)="continueCourse(course._id)"
                 class="btn btn-primary"
               >
                 {{ course.progress === 100 ? "Дахин үзэх" : "Үргэлжлүүлэх" }}
@@ -122,10 +124,11 @@
               <p class="instructor">{{ course.instructor }}</p>
               <div class="price">{{ course.price | number }}₮</div>
               <a
-                [routerLink]="['/course', course._id]"
+                [routerLink]="['/courses', course._id]"
                 class="btn btn-primary btn-sm"
-                >Дэлгэрэнгүй</a
               >
+                Дэлгэрэнгүй
+              </a>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CommentService } from '../../services/comment.service';
 import { Comment } from '../../models/models';
 import { Observable } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-comment',
@@ -21,7 +22,7 @@ export class CommentComponent implements OnInit {
   newComment: Partial<Comment> = { content: '', rating: 5 };
   rating = [1, 2, 3, 4, 5];
 
-  constructor(private commentService: CommentService) {}
+  constructor(private commentService: CommentService, public authService: AuthService ) {}
 
   ngOnInit() {
     this.loadComments();

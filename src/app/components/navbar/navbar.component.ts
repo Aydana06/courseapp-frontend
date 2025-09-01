@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import {User} from '../../models/models';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-navbar',
@@ -14,13 +15,19 @@ import {User} from '../../models/models';
 export class NavbarComponent implements OnInit {
   currentUser: User | null = null;
   isMenuOpen = false;
+  cartCount = 0;
 
   constructor(
     private authService: AuthService,
+    private cartService: CartService,
     private router: Router
   ) {}
 
   ngOnInit() {
+    this.cartService.loadUserCartAndEnroll();
+    this.cartService.cart$.subscribe(cart => {
+      this.cartCount = cart && cart.length;
+    });
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });

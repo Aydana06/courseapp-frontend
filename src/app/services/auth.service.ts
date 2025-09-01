@@ -3,23 +3,89 @@ import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ApiService, ApiResponse } from './api.service';
-import { LoginRequest, RegisterRequest, User } from '../models/models'; 
+import { LoginRequest, RegisterRequest, User } from '../models/models';
+import { jwtDecode } from 'jwt-decode';
 
-@Injectable({
+
+export interface JwtPayload {
+  sub: string;        // userId
+  role: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  exp?: number;       // хугацаа дуусах
+}
+@Injectable({ 
   providedIn: 'root'
 })
+
 export class AuthService {
   private readonly accessTokenKey = 'auth_token';
   private readonly userKey = 'user';
-  private API = 'http://localhost:5000/api/auth';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private apiService: ApiService
   ) {
     this.loadUserFromStorage();
+  }
+
+    // Token хадгалах
+  setToken(token: string) {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(this.accessTokenKey, token);
+    }
+  }
+
+  // Token авах
+  getToken(): string | null {
+    return isPlatformBrowser(this.platformId) ? localStorage.getItem(this.accessTokenKey) : null;
+  }
+
+  // JWT decode хийж user авах
+  getCurrentUser(): JwtPayload | null {
+  const token = this.getToken();
+  if (!token) return null;
+
+  try {
+    const decoded = jwtDecode<JwtPayload>(token);
+    if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+      this.logout();
+      return null;
+    }
+    return decoded;
+    } catch (err) {
+      console.error('Invalid token:', err);
+      return null;
+    }
+  }
+
+  // Зөвхөн хэрэглэгчийн ID авах
+  getUserId(): string | null {
+    const user = this.getCurrentUser();
+    return user?.sub || null;
+  }
+  get token(): string | null {
+    return localStorage.getItem(this.accessTokenKey);
+  }
+
+  get decoded(): JwtPayload | null {
+    if (!this.token) return null;
+    try {
+      return jwtDecode<JwtPayload>(this.token);
+    } catch {
+      return null;
+    }
+  }
+    get userId(): string | null {
+    return this.decoded?.sub ?? null;
+  }
+
+  get role(): string | null {
+    return this.decoded?.role ?? null;
   }
 
   private loadUserFromStorage(): void {
@@ -45,8 +111,8 @@ export class AuthService {
           const { user, accessToken } = response.data;  
           const mappedUser = { ...user, id: (user as any)._id }; 
           
-          // 📌 LocalStorage дээр хадгална
-          this.setAuthToken(accessToken);
+          // LocalStorage дээр хадгална
+          this.setToken(accessToken);
           this.setUser(mappedUser);
 
           return mappedUser;
@@ -58,17 +124,17 @@ export class AuthService {
   }
 
   register(userData: RegisterRequest): Observable<User> {
-    return this.apiService.post<ApiResponse<{ user: User; token: string }>>(
+    return this.apiService.post<ApiResponse<{ user: User; accessToken: string }>>(
       '/auth/register',
       userData
     ).pipe(
       map(response => {
         if (response.success && response.data) {
-          const { user, token } = response.data;
+          const { user, accessToken } = response.data;
           const mappedUser = { ...user, id: (user as any)._id };
 
-          // 📌 LocalStorage дээр хадгална
-          this.setAuthToken(token);
+          // LocalStorage дээр хадгална
+          this.setToken(accessToken);
           this.setUser(mappedUser);
 
           return mappedUser;
@@ -76,6 +142,23 @@ export class AuthService {
         throw new Error(response.message || 'Бүртгэл үүсгэх үед алдаа гарлаа');
       }),
       catchError(err => throwError(() => err))
+    );
+  }
+
+  refreshToken(): Observable<string> {
+    return this.apiService.post<ApiResponse<{ accessToken: string }>>('/auth/refresh', {}).pipe(
+      map(response => {
+        if (response.success && response.data) {
+          // Refresh дараа шинэ токен хадгална
+          this.setToken(response.data.accessToken);
+          return response.data.accessToken;
+        }
+        throw new Error('Token refresh failed');
+      }),
+      catchError(err => {
+        this.logout();
+        return throwError(() => err);
+      })
     );
   }
 
@@ -88,12 +171,6 @@ export class AuthService {
     this.currentUserSubject.next(null);
   }
 
-  private setAuthToken(token: string): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(this.accessTokenKey, token);
-    }
-  }
-
   private setUser(user: User): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem(this.userKey, JSON.stringify(user));
@@ -101,34 +178,10 @@ export class AuthService {
     this.currentUserSubject.next(user);
   }
 
-  getAuthToken(): string | null {
-    return isPlatformBrowser(this.platformId) ? localStorage.getItem(this.accessTokenKey) : null;
-  }
-
-  getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
-  }
-
   isAuthenticated(): boolean {
     return this.currentUserSubject.value !== null;
   }
 
-  refreshToken(): Observable<string> {
-    return this.apiService.post<ApiResponse<{ token: string }>>('/auth/refresh', {}).pipe(
-      map(response => {
-        if (response.success && response.data) {
-          // 📌 Refresh дараа шинэ токен хадгална
-          this.setAuthToken(response.data.token);
-          return response.data.token;
-        }
-        throw new Error('Token refresh failed');
-      }),
-      catchError(err => {
-        this.logout();
-        return throwError(() => err);
-      })
-    );
-  }
 
   updateProfile(userData: Partial<User>): Observable<User> {
     return this.apiService.put<ApiResponse<User>>('/auth/profile', userData).pipe(
@@ -136,7 +189,7 @@ export class AuthService {
         if (response.success && response.data) {
           const mappedUser = { ...response.data, id: (response.data as any)._id };
 
-          // 📌 LocalStorage дээр хадгална
+          //  LocalStorage дээр хадгална
           this.setUser(mappedUser);
 
           return mappedUser;

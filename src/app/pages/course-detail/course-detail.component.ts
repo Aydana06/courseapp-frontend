@@ -26,28 +26,21 @@ export class CourseDetailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      this.router.navigate(['/courses']);
-      return;
-    }
-
-    this.courseService.getCourseById(id).subscribe({
-      next: (course) => {
-        if (course) {
-          this.course = course;
-        } else {
-          this.router.navigate(['/courses']);
-        }
-      },
-      error: () => {
-        this.router.navigate(['/courses']);
-      }
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.courseService.getCourseById(id).subscribe(course => {
+        console.log('COURSE RESPONSE:', course);
+          if (course) {
+            this.course = course;
+          }
+        });
+      } 
     });
   }
 
-  addToCart(course: Course) {
-    this.cartService.addToCart(course);
-    alert(`${course.title} сагсанд нэмэгдлээ!`);
+  addToCart(courseId: string) {
+    this.cartService.addToCart(courseId);
+    alert(`Cагсанд амжилттай нэмэгдлээ!`);
   }
 }

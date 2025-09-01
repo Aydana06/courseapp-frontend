@@ -32,9 +32,9 @@ export class CoursesComponent implements OnInit {
       private router: Router
   ) {}
 
-  addToCart(course: Course) {
-    this.cartService.addToCart(course);
-    alert(`"${course.title}" сагсанд нэмэгдлээ!`);
+  addToCart(courseId: string) {
+    this.cartService.addToCart(courseId);
+    alert(`Cагсанд амжилттай нэмэгдлээ!`);
   }
   ngOnInit() {
     this.loadCourses();
@@ -48,8 +48,8 @@ export class CoursesComponent implements OnInit {
     });
   }
 
-  goToCourse(id: string) {
-    this.router.navigate(['/courses', id]);
+  goToCourse(_id: string) {
+    this.router.navigate(['/courses', _id]);
   }
 
 loadFilterOptions() {
@@ -72,8 +72,6 @@ loadFilterOptions() {
     ];
   });
 }
-
-
 
   onSearchChange(event: Event) {
     const target = event.target as HTMLInputElement;

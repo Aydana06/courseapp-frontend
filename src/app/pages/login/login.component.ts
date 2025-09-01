@@ -42,7 +42,7 @@ export class LoginComponent {
         },
         error: (error) => {
           console.error('Login error:', error);
-          this.errorMessage = error.message || 'Имэйл эсвэл нууц үг буруу байна';
+          this.errorMessage = error?.error?.message || error?.message || 'Имэйл эсвэл нууц үг буруу байна';
           this.isLoading = false;
         },
         complete: () => {

@@ -21,12 +21,12 @@ export interface User {
 }
 
 export interface Comment {
-  id?: string;
+  _id: string;
   name: string;
   role: string;
   content: string;
   rating: number;
-  userId?: string; 
+  userId: string; 
 }
 
 export interface LoginRequest {
@@ -41,7 +41,7 @@ export interface RegisterRequest {
   password: string;
   phone: string;
   confirmPassword?: string;
-  role: "student" | "admin" | "instructor";
+  role: string;
 }
 
 export interface AuthResponse {

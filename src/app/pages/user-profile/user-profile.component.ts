@@ -49,7 +49,7 @@ export class UserProfileComponent implements OnInit {
         bio: this.user.bio || '', 
         preferences: {
         language: this.user.preferences?.language || 'Монгол',
-        notifications: this.user.preferences?.notifications ?? true,
+        notifications: this.user.preferences?.notifications ?? false,
         newsletter: this.user.preferences?.newsletter ?? false
         }
       };

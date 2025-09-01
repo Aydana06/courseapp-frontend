@@ -45,7 +45,7 @@ export class RegisterComponent {
       }
 
     // Validate email format
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       this.errorMessage = 'Имэйлийн хаяг буруу байна';
       this.isLoading = false;
@@ -78,12 +78,13 @@ export class RegisterComponent {
     email,
     password,
     phone,
-    role: 'student'}).subscribe({
+    role}).subscribe({
       next: (user) => {
         console.log('Registration successful:', user);
-        console.log(this.registerData)
         this.successMessage = 'Бүртгэл амжилттай үүслээ!';
-        this.router.navigate(['/dashboard']);
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 1500);
       },
       error: (error) => {
         console.error('Registration error:', error);
@@ -95,4 +96,5 @@ export class RegisterComponent {
       }
     });
   }
+
 } 

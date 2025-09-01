@@ -1,30 +1,40 @@
 <div class="cart">
   <h1 page-header>Таны сагс</h1>
 
-  <div *ngIf="items.length === 0">
-    Таны сагс хоосон байна.
+  <!-- Хоосон үед -->
+  <div *ngIf="items && items.length === 0; else cartList">
+    <p>Таны сагс хоосон байна</p>
     <a (click)="routeCourse()">Энд дарж</a> сургалтуудаас сонирхоно уу.
   </div>
 
-  <ul>
-    <li *ngFor="let item of items" class="cart-item">
-      <img [src]="item.image" [alt]="item.title" width="60" />
-      <div class="cart-info">
-        <h3>{{ item.title }}</h3>
-        <p>{{ item.price | number }}₮</p>
-      </div>
-      <button (click)="remove(item._id)" class="btn btn-outline btn-sm">
-        Устгах
-      </button>
-    </li>
-  </ul>
+  <!-- Хоосон биш үед -->
+  <ng-template #cartList>
+    <ul>
+      <li *ngFor="let item of items" class="cart-item">
+        <img [src]="item.image" [alt]="item.title" width="60" />
+        <div class="cart-info">
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.price | number }}₮</p>
+        </div>
 
-  <button
-    *ngIf="items.length > 0"
-    type="button"
-    (click)="buyCourse()"
-    class="btn btn-danger"
-  >
-    Худалдаж авах
-  </button>
+        <button
+          (click)="remove(item._id)"
+          class="btn btn-outline btn-sm"
+          [disabled]="loadingId === item._id"
+        >
+          <span *ngIf="loadingId === item._id">⏳</span>
+          <span *ngIf="loadingId !== item._id">Устгах</span>
+        </button>
+      </li>
+    </ul>
+
+    <button
+      *ngIf="items && items.length > 0"
+      type="button"
+      (click)="buyCourse()"
+      class="btn btn-danger"
+    >
+      Худалдаж авах
+    </button>
+  </ng-template>
 </div>

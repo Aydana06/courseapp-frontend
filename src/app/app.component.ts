@@ -7,8 +7,9 @@ import { NavbarComponent } from './components/navbar/navbar.component';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, CommonModule, NavbarComponent],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+templateUrl: './app.component.html',
+styleUrls: ['./app.component.css']
+
 })
 export class App {
   protected readonly title = signal('Сургалтын Вэбсайт');

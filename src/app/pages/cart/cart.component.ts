@@ -14,24 +14,32 @@ import { Router } from '@angular/router';
 })
 export class CartComponent implements OnInit {
   items: Course[] = [];
+  loadingId: string | null = null;
 
   constructor(private cartService: CartService, private router: Router) {}
 
   ngOnInit() {
+    this.cartService.loadUserCartAndEnroll();
     this.cartService.cart$.subscribe(items => {
       this.items = items;
     });
   }
 
   remove(id: string) {
-    this.cartService.removeFromCart(id);
+    this.loadingId = id;
+    this.cartService.removeFromCart(id).subscribe({
+      next: () => {
+        this.loadingId = null;
+      },
+      error: () => {
+        this.loadingId = null;
+      }
+    });
   }
 
- buyCourse() {
-  this.cartService.checkout();
-  this.router.navigate(['/checkout']);
-}
-
+  buyCourse() {
+    this.router.navigate(['/checkout']);
+  }
 
   routeCourse(){
     this.router.navigate(['/courses']);

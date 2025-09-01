@@ -18,7 +18,15 @@
               >★</span
             >
           </div>
-          <button (click)="deleteComment(comment.id!)" class="delete-btn">
+          <button
+            *ngIf="
+              authService.isLoggedIn() &&
+              (authService.userId === comment.userId ||
+                authService.role === 'admin')
+            "
+            (click)="deleteComment(comment._id!)"
+            class="delete-btn"
+          >
             Устгах
           </button>
         </div>
@@ -26,7 +34,7 @@
     </div>
     <!-- Сэтгэгдэл бичих товч -->
     <div class="add-comment-btn">
-      <button (click)="toggleForm()">
+      <button (click)="toggleForm()" *ngIf="authService.isLoggedIn()">
         {{ showForm ? "Болих" : "Сэтгэгдэл бичих" }}
       </button>
     </div>

@@ -18,11 +18,10 @@ import { CommentComponent } from '../../components/comments/comments.component';
 })
 export class HomeComponent implements OnInit {
   courses$!: Observable<Course[]>;
-  // comments$!: Observable<Comment[]>;
   featuredCourses$!: Observable<Course[]>;
 
   showForm = false;
-  newComment: Comment = { name: '', role: '', content: '', rating: 5 };
+  newComment: Comment = { _id: '',name: '', role: '', content: '', rating: 5, userId: '' };
 
   rating = [1, 2, 3, 4, 5];
 
@@ -50,8 +49,8 @@ export class HomeComponent implements OnInit {
     this.featuredCourses$ = this.courses$; 
   }
 
-  addToCart(course: Course) {
-    this.cartService.addToCart(course);
-    alert(`"${course.title}" сагсанд нэмэгдлээ.`);
+  addToCart(courseId: string) {
+    this.cartService.addToCart(courseId);
+    alert(`Cагсанд амжилттай нэмэгдлээ!`);
   }
 }
