@@ -23,9 +23,9 @@ export class CheckoutComponent implements OnInit {
 
     // cart$-д subscribe хийгээд мэдээллийг авна
     this.cartService.cart$.subscribe(items => {
-    this.items = items || []; // хоосон бол [] болгоно
-    this.total = this.items.reduce((sum, item) => sum + (item.price || 0), 0);
-  });
+      this.items = items || [];
+      this.total = this.items.reduce((sum, item) => sum + (item.price ?? 0), 0);
+    });
   }
 
   removeFromCart(courseId: string) {

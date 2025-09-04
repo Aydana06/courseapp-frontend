@@ -1,13 +1,26 @@
 <div class="dashboard">
-  <div class="container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <p>Хяналтын самбарыг уншиж байна...</p>
+  </div>
+
+  <div class="container" *ngIf="!isLoading">
     <!-- Header -->
     <div class="dashboard-header">
-      <h1>Хяналтын самбар</h1>
-      <p>
-        Сайн байна уу
-        <b>{{ user?.firstName }} {{ user?.lastName }}</b
-        >! Таны сургалтын явц
-      </p>
+      <div class="header-content">
+        <div>
+          <h1>Хяналтын самбар</h1>
+          <p>
+            Сайн байна уу
+            <b>{{ user?.firstName }} {{ user?.lastName }}</b
+            >! Таны сургалтын явц
+          </p>
+        </div>
+        <button (click)="refreshDashboard()" class="btn btn-outline refresh-btn">
+          🔄 Шинэчлэх
+        </button>
+      </div>
     </div>
 
     <!-- Stats Overview -->
@@ -53,7 +66,7 @@
           <div *ngFor="let course of enrolledCourses" class="course-item">
             <div class="course-image">
               <img
-                [src]="course.image"
+                [src]="getCourseImageUrl(course.image)"
                 [alt]="course.title"
                 (error)="onImageError($event)"
               />
@@ -64,6 +77,9 @@
               <p class="instructor">Багш: {{ course.instructor }}</p>
               <p class="last-accessed">
                 Сүүлд: {{ formatDate(course.lastAccessed) }}
+              </p>
+              <p class="lesson-progress">
+                Хичээл: {{ course.completedLessons || 0 }}/{{ course.totalLessons || 0 }}
               </p>
 
               <div class="progress-container">
@@ -83,7 +99,7 @@
                 (click)="continueCourse(course._id)"
                 class="btn btn-primary"
               >
-                {{ course.progress === 100 ? "Дахин үзэх" : "Үргэлжлүүлэх" }}
+                {{ getCourseStatus(course.progress) }}
               </button>
             </div>
           </div>
@@ -113,7 +129,7 @@
           >
             <div class="course-image">
               <img
-                [src]="course.image"
+                [src]="getCourseImageUrl(course.image)"
                 [alt]="course.title"
                 (error)="onImageError($event)"
               />

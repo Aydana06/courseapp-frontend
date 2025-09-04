@@ -2,7 +2,7 @@
   <div class="container">
     <div class="nav-brand">
       <a routerLink="/home" class="brand-link">
-        <h1>Төлбөртэй Сургалт</h1>
+        <h1>Онлайн сургалтууд</h1>
       </a>
     </div>
 
@@ -23,7 +23,9 @@
       >
 
       <ng-container *ngIf="isAuthenticated">
+        <!-- Сагс зөвхөн student эрхтэй хэрэглэгчдэд харагдана -->
         <a
+          *ngIf="!isAdminOrInstructor"
           routerLink="/cart"
           routerLinkActive="active"
           class="nav-link"
@@ -33,12 +35,32 @@
         </a>
 
         <a
+        *ngIf="!isAdminOrInstructor"
           routerLink="/dashboard"
           routerLinkActive="active"
           class="nav-link"
           (click)="closeMenu()"
           >Хяналтын самбар</a
         >
+        
+        <!-- Admin/Instructor меню -->
+        <ng-container *ngIf="isAdminOrInstructor">
+          <a
+            routerLink="/admin"
+            routerLinkActive="active"
+            class="nav-link admin-link"
+            (click)="closeMenu()"
+            >Админ панел</a
+          >
+          <a
+            routerLink="/create-course"
+            routerLinkActive="active"
+            class="nav-link"
+            (click)="closeMenu()"
+            >Сургалт үүсгэх</a
+          >
+        </ng-container>
+        
         <a
           routerLink="/profile"
           routerLinkActive="active"

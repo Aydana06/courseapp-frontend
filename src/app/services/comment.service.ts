@@ -12,9 +12,12 @@ export class CommentService {
 
   constructor(private apiService: ApiService) {}
 
-  // Бүх коммент авах
-  getComments(): Observable<Comment[]> {
-    return this.apiService.get<ApiResponse<Comment[]>>(this.baseUrl).pipe(
+  // Бүх коммент авах (сонголтоор courseId, limit)
+  getComments(courseId?: string, limit?: number): Observable<Comment[]> {
+    const params: any = {};
+    if (courseId) params.courseId = courseId;
+    if (limit) params.limit = limit;
+    return this.apiService.get<ApiResponse<Comment[]>>(this.baseUrl, params).pipe(
       map(res => res.success && res.data ? res.data : []),
       catchError(() => of([]))
     );
@@ -28,8 +31,8 @@ export class CommentService {
     );
   }
 
-  // Коммент нэмэх
-  addComment(comment: Partial<Comment>): Observable<Comment | undefined> {
+  // Коммент нэмэх (courseId заавал эсвэл сонголтоор)
+  addComment(comment: Partial<Comment> & { courseId?: string }): Observable<Comment | undefined> {
     return this.apiService.post<ApiResponse<Comment>>(this.baseUrl, comment).pipe(
       map(res => res.success && res.data ? res.data : undefined),
       catchError(() => of(undefined))

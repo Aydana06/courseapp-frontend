@@ -1,0 +1,122 @@
+<div class="admin-dashboard">
+  <div class="container">
+    <div class="page-header">
+      <h1>Админ хяналтын самбар</h1>
+      <p>Сургалтуудыг удирдах, шинэ сургалт үүсгэх</p>
+    </div>
+
+    <!-- User Info -->
+    <div class="user-info">
+      <h3>Тавтай морилно уу, {{ user?.firstName }} {{ user?.lastName }}!</h3>
+      <p>Таны эрх: <span class="role-badge" [class.admin]="isAdmin()" [class.instructor]="isInstructor()">
+        {{ isAdmin() ? 'Админ' : 'Багш' }}
+      </span></p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats" *ngIf="isAdmin()">
+      <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-content">
+          <h4>{{ courses.length }}</h4>
+          <p>Нийт сургалт</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-content">
+          <h4>{{ getTotalStudents() }}</h4>
+          <p>Нийт суралцагч</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-content">
+          <h4>{{ getAverageRating() }}</h4>
+          <p>Дундаж үнэлгээ</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <h3>Хурдан үйлдлүүд</h3>
+      <div class="action-buttons">
+        <button class="btn btn-primary" (click)="createCourse()">
+          <span class="icon">➕</span>
+          Шинэ сургалт үүсгэх
+        </button>
+        <button class="btn btn-outline" (click)="refreshCourses()">
+          <span class="icon">🔄</span>
+          Сургалтуудыг шинэчлэх
+        </button>
+        <button *ngIf="isAdmin()" class="btn btn-outline" (click)="viewAllCourses()">
+          <span class="icon">📋</span>
+          Бүх сургалт харах
+        </button>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-message">
+      <p>{{ errorMessage }}</p>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading">
+      <div class="loading-spinner"></div>
+      <p>Сургалтуудыг уншиж байна...</p>
+    </div>
+
+    <!-- Courses List -->
+    <div *ngIf="!isLoading && courses.length > 0" class="courses-section">
+      <h3>Таны сургалтууд ({{ courses.length }})</h3>
+      <div class="courses-grid">
+        <div *ngFor="let course of courses" class="course-card">
+          <div class="course-image">
+            <img [src]="getCourseImageUrl(course.image)" [alt]="course.title" />
+          </div>
+          
+          <div class="course-content">
+            <h4>{{ course.title }}</h4>
+            <p class="course-description">{{ course.description }}</p>
+            
+            <div class="course-meta">
+              <span class="price">{{ course.price | number }}₮</span>
+              <span class="duration">{{ course.duration }}</span>
+              <span class="level">{{ course.details?.[0]?.level }}</span>
+            </div>
+            
+            <div class="course-stats">
+              <span class="rating">⭐ {{ course.details?.[0]?.rating || 0 }}</span>
+              <span class="students">👥 {{ course.details?.[0]?.students || 0 }}</span>
+            </div>
+          </div>
+          
+          <div class="course-actions">
+            <button class="btn btn-sm btn-outline" (click)="editCourse(course._id)">
+              ✏️ Засах
+            </button>
+            <button 
+              *ngIf="isAdmin()" 
+              class="btn btn-sm btn-danger" 
+              (click)="deleteCourse(course._id)"
+            >
+              🗑️ Устгах
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && courses.length === 0" class="empty-state">
+      <div class="empty-icon">📚</div>
+      <h3>Одоогоор сургалт байхгүй байна</h3>
+      <p>Эхний сургалтаа үүсгэж эхлээрэй</p>
+      <button class="btn btn-primary" (click)="createCourse()">
+        Шинэ сургалт үүсгэх
+      </button>
+    </div>
+  </div>
+</div>

@@ -69,7 +69,7 @@ export class AuthService {
     return user?.sub || null;
   }
   get token(): string | null {
-    return localStorage.getItem(this.accessTokenKey);
+    return isPlatformBrowser(this.platformId) ? localStorage.getItem(this.accessTokenKey) : null;
   }
 
   get decoded(): JwtPayload | null {
@@ -99,7 +99,7 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.currentUserSubject.value;
+    return this.isAuthenticated();
   }
 
   login(email: string, password: string): Observable<User> {
@@ -179,7 +179,21 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return this.currentUserSubject.value !== null;
+    const token = this.getToken();
+    if (!token) return false;
+    
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
+      if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+        this.logout();
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error('Invalid token:', err);
+      this.logout();
+      return false;
+    }
   }
 
 

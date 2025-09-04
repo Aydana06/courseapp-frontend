@@ -1,0 +1,38 @@
+<div class="edit-course" *ngIf="course">
+  <h2>Сургалт засах</h2>
+  <div class="form-grid">
+    <label>Гарчиг
+      <input [(ngModel)]="course.title" />
+    </label>
+    <label>Тайлбар
+      <textarea rows="4" [(ngModel)]="course.description"></textarea>
+    </label>
+    <label>Үнэ
+      <input type="number" [(ngModel)]="course.price" />
+    </label>
+    <label>Үргэлжлэх хугацаа
+      <input [(ngModel)]="course.duration" />
+    </label>
+    <label>Зураг URL
+      <input [(ngModel)]="course.image" />
+    </label>
+    <label>Багш
+      <input [(ngModel)]="course.instructor" />
+    </label>
+    <label>Шаардлага (мөр тус бүрд)
+      <textarea rows="4" [(ngModel)]="requirementsText"></textarea>
+    </label>
+    <label>Үр дүн (мөр тус бүрд)
+      <textarea rows="4" [(ngModel)]="outcomesText"></textarea>
+    </label>
+    <label>Хичээлүүд (Гарчиг | хугацаа | төрөл)
+      <textarea rows="6" [(ngModel)]="lessonsText"></textarea>
+    </label>
+  </div>
+  <div class="actions">
+    <button class="btn btn-primary" (click)="save()" [disabled]="isLoading">Хадгалах</button>
+    <button class="btn btn-outline" (click)="cancel()">Буцах</button>
+  </div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+</div>
+

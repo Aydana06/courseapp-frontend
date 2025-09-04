@@ -2,11 +2,9 @@
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="hero-content">
-      <h1 class="hero-title">Төлбөртэй Сургалтын Вэбсайт</h1>
+      <h1 class="hero-title">Програмчлалын онлайн сургалтууд</h1>
       <p class="hero-description">
-        Мэргэжлийн багш нартай хамт програмчлалын урлагийг сурна уу. Практик
-        дадлагатай, ойлгомжтой материалтай сургалтууд.
-      </p>
+        Мэргэжлийн багш нартай хамт програмчлалын урлагийг сурцгаая. Таныг практик дадпагатай, ойлгомжтой материалтай сургалтууд хүлээж байна.
       <div class="hero-buttons">
         <a routerLink="/courses" class="btn btn-primary">Сургалтуудыг харах</a>
         <a routerLink="/register" class="btn btn-secondary">Бүртгүүлэх</a>
@@ -21,14 +19,34 @@
       <div class="courses-grid">
         <div
           class="course-card"
-          *ngFor="let course of featuredCourses$ | async"
+          *ngFor="let course of (featuredCourses$ | async)?.slice(0, 3)"
         >
-          <div class="course-image" (click)="goToCourse(course._id)">
+          <div 
+            class="course-image clickable" 
+            (click)="goToCourse(course._id)"
+            (keydown.enter)="goToCourse(course._id)"
+            (keydown.space)="goToCourse(course._id)"
+            tabindex="0"
+            role="button"
+            [attr.aria-label]="'Сургалт харах: ' + course.title"
+          >
             <img [src]="course.image" [alt]="course.title" />
+            <div class="course-overlay">
+              <span class="view-course-text">Сургалт харах</span>
+            </div>
           </div>
           <div class="course-content">
-            <h3 class="course-title" (click)="goToCourse(course._id)">
+            <h3 
+              class="course-title clickable" 
+              (click)="goToCourse(course._id)"
+              (keydown.enter)="goToCourse(course._id)"
+              (keydown.space)="goToCourse(course._id)"
+              tabindex="0"
+              role="button"
+              [attr.aria-label]="'Сургалт харах: ' + course.title"
+            >
               {{ course.title }}
+              <span class="click-indicator">→</span>
             </h3>
             <p class="course-description">{{ course.description }}</p>
             <div class="course-meta">
@@ -39,12 +57,18 @@
               <span class="price">{{ course.price | number }}₮</span>
             </div>
             <button
-              *ngIf="authService.isLoggedIn()"
+              *ngIf="authService.isLoggedIn() && !isEnrolled(course._id)"
               class="btn btn-outline"
               (click)="addToCart(course._id)"
             >
               Сагсанд нэмэх
             </button>
+            <div
+              *ngIf="authService.isLoggedIn() && isEnrolled(course._id)"
+              class="enrolled-badge"
+            >
+              Бүртгүүлсэн
+            </div>
           </div>
         </div>
       </div>
@@ -56,27 +80,48 @@
     <div class="container">
       <div class="stats-grid">
         <div class="stat-item">
-          <h3>1000+</h3>
+          <h3>{{ totalStudents | number }}</h3>
           <p>Сурагч</p>
         </div>
         <div class="stat-item">
-          <h3>50+</h3>
+          <h3>{{ totalCourses }}</h3>
           <p>Сургалт</p>
         </div>
         <div class="stat-item">
-          <h3>20+</h3>
+          <h3>{{ totalInstructors }}</h3>
           <p>Багш</p>
         </div>
         <div class="stat-item">
-          <h3>95%</h3>
+          <h3>{{ satisfactionRate }}%</h3>
           <p>Сэтгэл ханамж</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Testimonials Section -->
-  <app-comment></app-comment>
+  <!-- Latest Comments Section (styled like course detail) -->
+  <section class="latest-comments">
+    <div class="container">
+      <h2 class="section-title">Сүүлд бичсэн сэтгэгдлүүд</h2>
+      <div class="testimonials-grid" *ngIf="latestComments.length; else noLatest">
+        <div class="testimonial-card" *ngFor="let c of latestComments">
+          <div class="testimonial-content">
+            <p>{{ c.content }}</p>
+          </div>
+          <div class="testimonial-author">
+            <h4>{{ c.name }}</h4>
+            <span>{{ c.role }}</span>
+            <div class="rating">
+              <span class="star" *ngFor="let star of [1,2,3,4,5]" [class.filled]="star <= c.rating">★</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #noLatest>
+        <p>Одоогоор сэтгэгдэл алга.</p>
+      </ng-template>
+    </div>
+  </section>
 
   <!-- CTA Section -->
   <section class="cta-section">

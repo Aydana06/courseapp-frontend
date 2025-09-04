@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -15,6 +15,7 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./comments.component.css']
 })
 export class CommentComponent implements OnInit {
+  @Input() courseId?: string;
   comments$!: Observable<Comment[]>;
   showForm = false;
   
@@ -34,8 +35,20 @@ export class CommentComponent implements OnInit {
 
   addComment(): void {
     if (!this.newComment.content) return;
+    const userId = this.authService.userId ?? '';
+    const decoded = this.authService.decoded;
+    const fullName = `${decoded?.firstName ?? ''} ${decoded?.lastName ?? ''}`.trim();
+    const role = this.authService.role ?? 'student';
 
-    this.commentService.addComment(this.newComment).subscribe({
+    const payload = {
+      ...this.newComment,
+      userId,
+      courseId: this.courseId,
+      name: fullName || decoded?.email || 'Хэрэглэгч',
+      role
+    } as Partial<Comment>;
+
+    this.commentService.addComment(payload).subscribe({
       next: () => {
         this.newComment = { content: '', rating: 5 };
         this.showForm = false;
@@ -46,7 +59,7 @@ export class CommentComponent implements OnInit {
   }
 
   loadComments(): void {
-    this.comments$ = this.commentService.getComments();
+    this.comments$ = this.commentService.getComments(this.courseId);
   }
 
   deleteComment(id: string): void {

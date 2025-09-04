@@ -1,40 +1,78 @@
 <div class="cart">
-  <h1 page-header>Таны сагс</h1>
+  <div class="container">
+    <h1 class="page-header">Таны сагс</h1>
 
-  <!-- Хоосон үед -->
-  <div *ngIf="items && items.length === 0; else cartList">
-    <p>Таны сагс хоосон байна</p>
-    <a (click)="routeCourse()">Энд дарж</a> сургалтуудаас сонирхоно уу.
-  </div>
+    <!-- Хоосон үед -->
+    <div *ngIf="items && items.length === 0; else cartList" class="empty-cart">
+      <div class="empty-icon">🛒</div>
+      <h3>Таны сагс хоосон байна</h3>
+      <p>Сургалтуудаас сонирхож байна уу?</p>
+      <button (click)="routeCourse()" class="btn btn-primary">
+        Сургалт харах
+      </button>
+    </div>
 
-  <!-- Хоосон биш үед -->
-  <ng-template #cartList>
-    <ul>
-      <li *ngFor="let item of items" class="cart-item">
-        <img [src]="item.image" [alt]="item.title" width="60" />
-        <div class="cart-info">
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.price | number }}₮</p>
+    <!-- Хоосон биш үед -->
+    <ng-template #cartList>
+      <div class="cart-items">
+        <div *ngFor="let item of items" class="cart-item">
+          <div class="course-image">
+            <img [src]="getCourseImageUrl(item.image)" [alt]="item.title" />
+          </div>
+
+          <div class="course-info">
+            <h3>{{ item.title }}</h3>
+            <p class="instructor">Багш: {{ item.instructor }}</p>
+            <p class="description">{{ item.description }}</p>
+            <div class="course-meta">
+              <span class="duration">⏱️ {{ item.duration }}</span>
+              <span class="level" *ngIf="item.details?.[0]?.level"
+                >📊 {{ item.details?.[0]?.level }}</span
+              >
+            </div>
+          </div>
+
+          <div class="course-price">
+            <span class="price">{{ item.price | number }}₮</span>
+          </div>
+
+          <div class="course-actions">
+            <button
+              (click)="enrollCourse(item._id)"
+              class="btn btn-primary"
+              [disabled]="loadingId === item._id"
+            >
+              <span *ngIf="loadingId === item._id">⏳</span>
+              <span *ngIf="loadingId !== item._id">Бүртгүүлэх</span>
+            </button>
+
+            <button
+              (click)="remove(item._id)"
+              class="btn btn-outline btn-sm"
+              [disabled]="loadingId === item._id"
+            >
+              Устгах
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-summary">
+        <div class="summary-info">
+          <p>
+            Нийт сургалт: <strong>{{ items.length }}</strong>
+          </p>
+          <p>
+            Нийт үнэ: <strong>{{ getTotalPrice() | number }}₮</strong>
+          </p>
         </div>
 
-        <button
-          (click)="remove(item._id)"
-          class="btn btn-outline btn-sm"
-          [disabled]="loadingId === item._id"
-        >
-          <span *ngIf="loadingId === item._id">⏳</span>
-          <span *ngIf="loadingId !== item._id">Устгах</span>
-        </button>
-      </li>
-    </ul>
-
-    <button
-      *ngIf="items && items.length > 0"
-      type="button"
-      (click)="buyCourse()"
-      class="btn btn-danger"
-    >
-      Худалдаж авах
-    </button>
-  </ng-template>
+        <div class="summary-actions">
+          <button (click)="buyCourse()" class="btn btn-primary btn-lg">
+            Бүгдийг худалдаж авах
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </div>
 </div>

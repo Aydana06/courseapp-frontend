@@ -1,0 +1,246 @@
+<div class="create-course-page">
+  <div class="container">
+    <div class="page-header">
+      <h1>Шинэ сургалт үүсгэх</h1>
+      <p>Оюутнуудад зориулсан шинэ сургалт үүсгээрэй</p>
+    </div>
+
+    <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" class="course-form">
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">
+        <p>{{ errorMessage }}</p>
+      </div>
+
+      <!-- Basic Information -->
+      <div class="form-section">
+        <h3>Үндсэн мэдээлэл</h3>
+        
+        <div class="form-group">
+          <label for="title">Сургалтын нэр *</label>
+          <input
+            type="text"
+            id="title"
+            formControlName="title"
+            class="form-control"
+            [class.invalid]="isFieldInvalid('title')"
+            placeholder="Жишээ: Angular Framework"
+          />
+          <div *ngIf="getFieldError('title')" class="error-text">
+            {{ getFieldError('title') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Тайлбар *</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            class="form-control"
+            [class.invalid]="isFieldInvalid('description')"
+            rows="4"
+            placeholder="Сургалтын дэлгэрэнгүй тайлбар..."
+          ></textarea>
+          <div *ngIf="getFieldError('description')" class="error-text">
+            {{ getFieldError('description') }}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="price">Үнэ (₮) *</label>
+            <input
+              type="number"
+              id="price"
+              formControlName="price"
+              class="form-control"
+              [class.invalid]="isFieldInvalid('price')"
+              placeholder="0"
+            />
+            <div *ngIf="getFieldError('price')" class="error-text">
+              {{ getFieldError('price') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="duration">Хугацаа *</label>
+            <input
+              type="text"
+              id="duration"
+              formControlName="duration"
+              class="form-control"
+              [class.invalid]="isFieldInvalid('duration')"
+              placeholder="Жишээ: 20 цаг"
+            />
+            <div *ngIf="getFieldError('duration')" class="error-text">
+              {{ getFieldError('duration') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="image">Зурагны URL</label>
+          <input
+            type="url"
+            id="image"
+            formControlName="image"
+            class="form-control"
+            placeholder="https://example.com/image.jpg"
+          />
+        </div>
+      </div>
+
+      <!-- Course Details -->
+      <div class="form-section">
+        <h3>Сургалтын дэлгэрэнгүй</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="level">Түвшин *</label>
+            <select
+              id="level"
+              formControlName="level"
+              class="form-control"
+              [class.invalid]="isFieldInvalid('level')"
+            >
+              <option value="">Түвшин сонгох</option>
+              <option value="Эхлэгч">Эхлэгч</option>
+              <option value="Дунд">Дунд</option>
+              <option value="Ахисан">Ахисан</option>
+            </select>
+            <div *ngIf="getFieldError('level')" class="error-text">
+              {{ getFieldError('level') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="category">Ангилал *</label>
+            <select
+              id="category"
+              formControlName="category"
+              class="form-control"
+              [class.invalid]="isFieldInvalid('category')"
+            >
+              <option value="">Ангилал сонгох</option>
+              <option value="Frontend">Frontend</option>
+              <option value="Backend">Backend</option>
+              <option value="Full Stack">Full Stack</option>
+              <option value="Mobile">Mobile</option>
+              <option value="Data Science">Data Science</option>
+              <option value="DevOps">DevOps</option>
+              <option value="Design">Design</option>
+            </select>
+            <div *ngIf="getFieldError('category')" class="error-text">
+              {{ getFieldError('category') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="rating">Үнэлгээ (0-5)</label>
+            <input
+              type="number"
+              id="rating"
+              formControlName="rating"
+              class="form-control"
+              min="0"
+              max="5"
+              step="0.1"
+              placeholder="4.5"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="students">Суралцагчдын тоо</label>
+            <input
+              type="number"
+              id="students"
+              formControlName="students"
+              class="form-control"
+              min="0"
+              placeholder="0"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="language">Хэл *</label>
+          <select
+            id="language"
+            formControlName="language"
+            class="form-control"
+            [class.invalid]="isFieldInvalid('language')"
+          >
+            <option value="Монгол">Монгол</option>
+            <option value="English">English</option>
+            <option value="Русский">Русский</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="tags">Тэмдэглэгээ (таслалаар тусгаарлан)</label>
+          <input
+            type="text"
+            id="tags"
+            formControlName="tags"
+            class="form-control"
+            placeholder="JavaScript, React, Frontend"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="requirements">Шаардлага (мөр тус бүрд нэг)</label>
+          <textarea
+            id="requirements"
+            formControlName="requirements"
+            class="form-control"
+            rows="3"
+            placeholder="JavaScript-ийн үндсэн мэдлэг&#10;HTML/CSS мэдлэг"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="outcomes">Үр дүн (мөр тус бүрд нэг)</label>
+          <textarea
+            id="outcomes"
+            formControlName="outcomes"
+            class="form-control"
+            rows="3"
+            placeholder="React-ийн бүх чухал онцлогуудыг сурах&#10;Real-world application хөгжүүлэх"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="lessonsText">Хичээлүүд (мөр тус бүрд: Гарчиг | хугацаа | төрөл)</label>
+          <textarea
+            id="lessonsText"
+            formControlName="lessonsText"
+            class="form-control"
+            rows="5"
+            placeholder="Introduction | 10m | video&#10;Setup | 15m | video"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-outline"
+          (click)="router.navigate(['/courses'])"
+          [disabled]="isSubmitting"
+        >
+          Цуцлах
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="isSubmitting || courseForm.invalid"
+        >
+          <span *ngIf="isSubmitting">Үүсгэж байна...</span>
+          <span *ngIf="!isSubmitting">Сургалт үүсгэх</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

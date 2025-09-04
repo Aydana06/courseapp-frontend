@@ -73,6 +73,7 @@ private handleError(error: HttpErrorResponse) {
         if (isPlatformBrowser(this.platformId)) {
           localStorage.removeItem('auth_token');
           localStorage.removeItem('user');
+          localStorage.removeItem('refresh_token');
         }
         break;
       case 403:

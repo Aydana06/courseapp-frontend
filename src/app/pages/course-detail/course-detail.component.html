@@ -1,9 +1,23 @@
-<div class="course-detail-container" *ngIf="course">
+<!-- Loading State -->
+<div *ngIf="isLoading" class="loading-container">
+  <div class="loading-spinner"></div>
+  <p>Сургалтыг уншиж байна...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="errorMessage && !isLoading" class="error-container">
+  <h2>Алдаа гарлаа</h2>
+  <p>{{ errorMessage }}</p>
+  <button class="btn btn-primary" (click)="goBack()">Буцах</button>
+</div>
+
+<!-- Course Content -->
+<div class="course-detail-container" *ngIf="course && !isLoading">
   <div class="container">
     <!-- Course Header -->
     <div class="course-header">
       <div class="course-image">
-        <img [src]="course.image" [alt]="course.title" />
+        <img [src]="getCourseImageUrl(course.image)" [alt]="course.title" />
       </div>
       <div class="course-info">
         <h1>{{ course.title }}</h1>
@@ -51,14 +65,31 @@
             <span class="price">{{ course.price | number }}₮</span>
           </div>
 
-          <!-- Нэвтэрсэн үед -->
+          <!-- Нэвтэрсэн үед - зөвхөн student эрхтэй хэрэглэгчдэд -->
           <button
-            *ngIf="authService.isLoggedIn()"
+            *ngIf="authService.isLoggedIn() && !isAdminOrInstructor()"
             class="btn btn-outline"
             (click)="addToCart(course._id)"
           >
             Сагсанд нэмэх
           </button>
+
+          <!-- Admin/Instructor үйлдлүүд -->
+          <div *ngIf="isAdminOrInstructor()" class="admin-actions">
+            <button
+              class="btn btn-outline"
+              (click)="editCourse(course._id)"
+            >
+              Сургалт засах
+            </button>
+            <button
+              *ngIf="isAdmin()"
+              class="btn btn-danger"
+              (click)="deleteCourse(course._id)"
+            >
+              Сургалт устгах
+            </button>
+          </div>
 
           <!-- Нэвтрээгүй үед -->
           <div *ngIf="!authService.isLoggedIn()" class="auth-required-card">
@@ -92,8 +123,19 @@
               <div class="lesson-type">
                 <span class="type-badge">{{ lesson.type }}</span>
               </div>
+              <div class="lesson-complete" *ngIf="isEnrolled">
+                <button class="btn btn-primary"
+                        (click)="toggleLessonComplete(i)"
+                        [disabled]="completedLessonIds.has(i + 1)">
+                  <span *ngIf="!completedLessonIds.has(i + 1); else doneTpl">Дууссан</span>
+                </button>
+                <ng-template #doneTpl>
+                  ✓ Дууссан
+                </ng-template>
+              </div>
             </div>
           </div>
+
         </div>
 
         <!-- Requirements -->
@@ -115,7 +157,7 @@
           </ul>
         </div>
       </div>
-      <app-comment></app-comment>
+      <app-comment [courseId]="course._id"></app-comment>
     </div>
   </div>
 </div>

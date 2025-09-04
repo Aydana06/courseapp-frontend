@@ -1,0 +1,7 @@
+.edit-course { max-width: 800px; margin: 20px auto; }
+.form-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+label { display: flex; flex-direction: column; font-size: 14px; gap: 6px; }
+input, textarea { padding: 8px; border: 1px solid #ddd; border-radius: 6px; }
+.actions { margin-top: 16px; display: flex; gap: 8px; }
+.error { color: #b00020; margin-top: 12px; }
+

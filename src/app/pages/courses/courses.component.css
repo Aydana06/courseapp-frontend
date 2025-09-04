@@ -106,6 +106,12 @@
   font-size: 1rem;
 }
 
+.filtering-indicator {
+  color: #667eea;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
 .courses-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -124,6 +130,7 @@
 .course-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border: 2px solid rgba(102, 126, 234, 0.3);
 }
 
 .course-image {
@@ -131,6 +138,61 @@
   height: 250px;
   overflow: hidden;
   object-fit: cover;
+  cursor: pointer;
+}
+
+.course-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.course-image:hover::after {
+  opacity: 1;
+}
+
+.view-course-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(102, 126, 234, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.view-course-overlay span {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.course-image:hover .view-course-overlay {
+  opacity: 1;
+}
+
+.course-image:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.course-content h3:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .course-image img {
@@ -173,6 +235,23 @@
   font-size: 1.2rem;
   margin-bottom: 0.75rem;
   line-height: 1.4;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.course-content h3:hover {
+  color: #667eea;
+}
+
+.click-indicator {
+  opacity: 0.6;
+  margin-left: 0.5rem;
+  font-size: 0.9em;
+  transition: opacity 0.3s ease;
+}
+
+.course-content h3:hover .click-indicator {
+  opacity: 1;
 }
 
 .course-description {
@@ -238,6 +317,32 @@
   align-items: center;
 }
 
+.admin-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.admin-actions .btn {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn-sm {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background: #c82333;
+}
+
 .price {
   color: #667eea;
   font-size: 1.2rem;
@@ -284,6 +389,37 @@
   color: #666;
 }
 
+/* Error Message */
+.error-message {
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1rem 2rem;
+  text-align: center;
+  color: #c33;
+}
+
+.error-message p {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.error-message .btn {
+  background: #c33;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.error-message .btn:hover {
+  background: #a22;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .courses-grid {
@@ -312,4 +448,16 @@
   .btn {
     text-align: center;
   }
+}
+
+.enrolled-badge {
+  background: #28a745;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  min-width: 100px;
 }

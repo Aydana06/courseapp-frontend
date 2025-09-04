@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -20,14 +21,19 @@ export class NavbarComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private cartService: CartService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit() {
-    this.cartService.loadUserCartAndEnroll();
-    this.cartService.cart$.subscribe(cart => {
-      this.cartCount = cart && cart.length;
-    });
+    // Сагс зөвхөн student эрхтэй хэрэглэгчдэд ачаална
+    if (!this.isAdminOrInstructor) {
+      this.cartService.loadUserCartAndEnroll();
+      this.cartService.cart$.subscribe(cart => {
+        this.cartCount = cart && cart.length;
+      });
+    }
+    
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
@@ -35,6 +41,12 @@ export class NavbarComponent implements OnInit {
 
   get isAuthenticated(): boolean {
     return this.currentUser !== null;
+  }
+
+  get isAdminOrInstructor(): boolean {
+    if (!isPlatformBrowser(this.platformId)) return false;
+    const role = this.authService.role;
+    return role === 'admin' || role === 'instructor';
   }
 
   toggleMenu() {

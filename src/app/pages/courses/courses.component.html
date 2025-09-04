@@ -1,4 +1,17 @@
 <div class="courses-page">
+  <app-loading
+    [show]="isLoading"
+    message="Сургалтуудыг уншиж байна..."
+  ></app-loading>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+    <button class="btn btn-primary" (click)="refreshCourses()">
+      Дахин оролдох
+    </button>
+  </div>
+
   <div class="container">
     <div class="page-header">
       <h1>Сургалтууд</h1>
@@ -11,7 +24,7 @@
         <input
           type="text"
           placeholder="Сургалт хайх..."
-          [(ngModel)]="searchQuery"
+          (input)="onSearchChange($event)"
           class="search-input"
         />
       </div>
@@ -43,25 +56,51 @@
 
     <!-- Results Summary -->
     <div class="results-summary">
-      <p>{{ filteredCourses.length }} сургалт олдлоо</p>
+      <p>
+        {{ filteredCourses.length }} сургалт олдлоо
+        <span *ngIf="isFiltering" class="filtering-indicator"
+          >(Шинжлэж байна...)</span
+        >
+      </p>
     </div>
 
     <!-- Courses Grid -->
     <div class="courses-grid">
       <div *ngFor="let course of filteredCourses" class="course-card">
-        <div class="course-image" (click)="goToCourse(course._id)">
+        <div
+          class="course-image"
+          (click)="goToCourse(course._id)"
+          (keydown.enter)="goToCourse(course._id)"
+          (keydown.space)="goToCourse(course._id)"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'Сургалт харах: ' + course.title"
+        >
           <img
-            [src]="course.image"
+            [src]="getCourseImageUrl(course.image)"
             [alt]="course.title"
             onerror="this.src='assets/images/course-placeholder.jpg'"
           />
           <div class="course-level">{{ course.details?.[0]?.level }}</div>
+          <div class="view-course-overlay">
+            <span>Сургалт харах</span>
+          </div>
         </div>
 
         <div class="course-content">
           <div class="course-category">{{ course.details?.[0]?.category }}</div>
 
-          <h3 (click)="goToCourse(course._id)">{{ course.title }}</h3>
+          <h3
+            (click)="goToCourse(course._id)"
+            (keydown.enter)="goToCourse(course._id)"
+            (keydown.space)="goToCourse(course._id)"
+            tabindex="0"
+            role="button"
+            [attr.aria-label]="'Сургалт харах: ' + course.title"
+          >
+            {{ course.title }}
+            <span class="click-indicator">→</span>
+          </h3>
           <p class="course-description">{{ course.description }}</p>
 
           <div class="course-meta">
@@ -88,17 +127,39 @@
           </div>
 
           <div class="course-footer">
-            <div class="price">
-              {{ course.details?.[0]?.students || 0 }} суралцагч
-            </div>
+            <div class="price">{{ course.price || 0 }}₮</div>
 
             <button
-              *ngIf="authService.isLoggedIn()"
+              *ngIf="authService.isLoggedIn() && !isAdminOrInstructor() && !isEnrolled(course._id)"
               class="btn btn-outline"
               (click)="addToCart(course._id)"
             >
               Сагсанд нэмэх
             </button>
+            
+            <div
+              *ngIf="authService.isLoggedIn() && !isAdminOrInstructor() && isEnrolled(course._id)"
+              class="enrolled-badge"
+            >
+              Бүртгүүлсэн
+            </div>
+            
+            <!-- Admin/Instructor үйлдлүүд -->
+            <div *ngIf="isAdminOrInstructor()" class="admin-actions">
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="editCourse(course._id)"
+              >
+                Засах
+              </button>
+              <button
+                *ngIf="isAdmin()"
+                class="btn btn-sm btn-danger"
+                (click)="deleteCourse(course._id)"
+              >
+                Устгах
+              </button>
+            </div>
           </div>
         </div>
       </div>
